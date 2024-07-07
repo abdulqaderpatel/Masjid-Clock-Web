@@ -15,6 +15,7 @@ import HelloWorld from "./components/HelloWorld.vue";
 
     <div class="wrapper">
       <HelloWorld msg="You did it!" />
+      <h1 class="bg-slate-500 caret-lime-100 text-cyan-700">fsd</h1>
 
       <nav>
         <RouterLink to="/">Home</RouterLink>
