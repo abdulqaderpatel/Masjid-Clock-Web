@@ -19,7 +19,8 @@
       >
         <template v-if="time">
           <template v-if="time > '11:59'">
-            {{ time.substring(0, 5) }} p.m
+            {{ convertTo12HourFormat(time) }}
+            p.m
           </template>
           <template v-else> {{ time.substring(0, 5) }} a.m </template>
         </template>
@@ -30,17 +31,31 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
+function convertTo12HourFormat(time24: string) {
+  let [hours, minutes, seconds] = time24.split(":").map(Number);
+
+  if (hours >= 12) {
+    if (hours > 12) {
+      hours -= 12;
+    }
+  } else if (hours === 0) {
+    hours = 12;
+  }
+
+  const formattedTime = `${String(hours).padStart(2, "0")}:${String(
+    minutes
+  ).padStart(2, "0")}`;
+  return formattedTime;
+}
+defineProps({
   name: String,
   icon: String,
   time: {
-    name: String,
+    type: String,
     required: true,
   },
   isOngoing: Boolean,
 });
-
-console.log(props.isOngoing);
 </script>
 
 <style scoped></style>
