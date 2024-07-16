@@ -1,28 +1,36 @@
 <template>
-  <div class="flex justify-between items-center mb-2 hover:bg-gray-200">
+  <div
+    class="flex justify-between items-center mb-2 hover:bg-gray-200 px-2"
+    :class="{ 'bg-green-300': isOngoing }"
+  >
     <div class="flex items-center gap-3">
       <img :src="icon" alt="" width="40" />
-      <p class="font-medium text-blue-500" :class="{ 'text-black': isOngoing }">
+      <p
+        class="font-medium text-blue-500"
+        :class="{ 'text-red-600': isOngoing }"
+      >
         {{ name }}
       </p>
     </div>
     <div class="flex items-center gap-3">
       <p
         class="font-semibold text-blue-500"
-        :class="{ 'text-black': isOngoing }"
+        :class="{ 'text-red-600': isOngoing }"
       >
         <template v-if="time">
-          <template v-if="time > '11:59'"> {{ time }} p.m </template>
-          <template v-else> {{ time }} a.m </template>
+          <template v-if="time > '11:59'">
+            {{ time.substring(0, 5) }} p.m
+          </template>
+          <template v-else> {{ time.substring(0, 5) }} a.m </template>
         </template>
       </p>
-      <img src="../../assets/volume-up.png" alt="" width="40" />
+      <!-- <img src="../../assets/volume-up.png" alt="" width="40" /> -->
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
   name: String,
   icon: String,
   time: {
@@ -31,6 +39,8 @@ defineProps({
   },
   isOngoing: Boolean,
 });
+
+console.log(props.isOngoing);
 </script>
 
 <style scoped></style>

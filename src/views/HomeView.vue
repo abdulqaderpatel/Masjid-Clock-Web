@@ -11,9 +11,17 @@ const isLoading = ref(true);
 let response: Response;
 
 let todayNamazData: any;
-const currentTime = new Date().toLocaleTimeString();
+const currentTime = ref(new Date().toLocaleTimeString());
 
-let currentNamaz = "Fajr";
+const currentNamaz = ref("Fajr");
+
+let nextNamaz;
+
+const timeDifference = ref(0);
+
+let globalResponse: Response;
+
+// Watch the timeDifference and log its value whenever it changes
 
 //get time difference between two dates in seconds
 function getDifferenceBetweenTwoTimes(
@@ -29,6 +37,7 @@ function getDifferenceBetweenTwoTimes(
 
   return (namazDate.getTime() - currentDate.getTime()) / 1000;
 }
+
 //convert seconds to hh:mms:ss format
 function secondsToHms(sec: any) {
   var hours: any = Math.floor(sec / 3600);
@@ -43,81 +52,101 @@ function secondsToHms(sec: any) {
   return hours + ":" + min + ":" + sec;
 }
 
-const timeDifference = ref(0);
+function getNextNamazAccordingToTime(
+  time: string,
+  fajr: string,
+  zuhr: string,
+  asr: string,
+  maghrib: string,
+  isha: string,
+  namaz: string
+) {
+  if (time < fajr) {
+    namaz = "Fajr";
+  } else if (time >= fajr && time < zuhr) {
+    namaz = "Zuhr";
+  } else if (time >= zuhr && time < asr) {
+    namaz = "Asr";
+  } else if (time >= asr && time < maghrib) {
+    namaz = "Maghrib";
+  } else {
+    namaz = "Isha";
+  }
+
+  return namaz;
+}
 
 onMounted(async () => {
   const todaysDate = new Date().toISOString().substring(0, 10);
   response = await (await axios(`${BASE_URL}/namaz/date/${todaysDate}`)).data;
+  globalResponse = response;
 
-  console.log(new Date().getFullYear());
+  currentNamaz.value = getNextNamazAccordingToTime(
+    currentTime.value,
+    response.data.fajr_namaz,
+    response.data.zuhr_namaz,
+    response.data.asr_namaz,
+    response.data.maghrib_namaz,
+    response.data.isha_namaz,
+    currentNamaz.value
+  );
+
+  console.log(currentNamaz.value);
+
+  if (currentNamaz.value == "Fajr") {
+    nextNamaz = response.data.fajr_namaz.toString();
+  } else if (currentNamaz.value == "Zuhr") {
+    nextNamaz = response.data.zuhr_namaz.toString();
+  } else if (currentNamaz.value == "Asr") {
+    nextNamaz = response.data.asr_namaz.toString();
+  } else if (currentNamaz.value == "Maghrib") {
+    nextNamaz = response.data.maghrib_namaz.toString();
+  } else {
+    nextNamaz = response.data.isha_namaz.toString();
+  }
+  console.log(nextNamaz);
 
   timeDifference.value = getDifferenceBetweenTwoTimes(
     todaysDate,
-    response.data.maghrib_namaz.toString(),
-    currentTime
+    nextNamaz,
+    currentTime.value
   );
 
-  console.log(secondsToHms(timeDifference.value));
+  console.log(currentNamaz.value);
 
   todayNamazData = [
     {
       name: "Fajr",
       icon: Sunrise,
       value: response.data.fajr_namaz,
-      condition: currentTime < response.data.fajr_namaz,
+      condition: currentNamaz.value == "Fajr",
     },
     {
       name: "Zuhr",
       icon: Sunrise,
       value: response.data.zuhr_namaz,
-      condition:
-        currentTime >= response.data.fajr_namaz &&
-        currentTime < response.data.zuhr_namaz,
+      condition: currentNamaz.value == "Zuhr",
     },
     {
       name: "Asr",
       icon: Sunrise,
       value: response.data.asr_namaz,
-      condition:
-        currentTime >= response.data.zuhr_namaz &&
-        currentTime < response.data.asr_namaz,
+      condition: currentNamaz.value == "Asr",
     },
     {
       name: "Maghrib",
       icon: Sunset,
       value: response.data.maghrib_namaz,
-      condition:
-        currentTime >= response.data.asr_namaz &&
-        currentTime < response.data.maghrib_namaz,
+      condition: currentNamaz.value == "Maghrib",
     },
     {
       name: "Isha",
       icon: Sunset,
       value: response.data.isha_namaz,
-      condition: currentTime >= response.data.maghrib_namaz,
+      condition: currentNamaz.value == "Isha",
     },
   ];
-
-  if (currentTime < response.data.fajr_namaz) {
-    currentNamaz = "Fajr";
-  } else if (
-    currentTime >= response.data.fajr_namaz &&
-    currentTime < response.data.zuhr_namaz
-  ) {
-    currentNamaz = "Zuhr";
-  } else if (
-    currentTime >= response.data.zuhr_namaz &&
-    currentTime < response.data.asr_namaz
-  ) {
-    currentNamaz = "Asr";
-  } else if (
-    currentTime >= response.data.asr_namaz &&
-    currentTime < response.data.maghrib_namaz
-  ) {
-    currentNamaz = "Maghrib";
-  } else {
-    currentNamaz = "Isha";
-  }
+  console.log(currentNamaz.value);
 
   isLoading.value = false;
 });
@@ -125,13 +154,74 @@ onMounted(async () => {
 setInterval(() => {
   if (timeDifference.value > 0) {
     timeDifference.value--;
+  } else {
+    console.log("timepass");
+
+    currentTime.value = new Date().toLocaleTimeString();
+    currentNamaz.value = getNextNamazAccordingToTime(
+      currentTime.value,
+      globalResponse.data.fajr_namaz,
+      globalResponse.data.zuhr_namaz,
+      globalResponse.data.asr_namaz,
+      globalResponse.data.maghrib_namaz,
+      globalResponse.data.isha_namaz,
+      currentNamaz.value
+    );
+
+    if (currentNamaz.value == "Fajr") {
+      nextNamaz = globalResponse.data.fajr_namaz.toString();
+    } else if (currentNamaz.value == "Zuhr") {
+      nextNamaz = globalResponse.data.zuhr_namaz.toString();
+    } else if (currentNamaz.value == "Asr") {
+      nextNamaz = globalResponse.data.asr_namaz.toString();
+    } else if (currentNamaz.value == "Maghrib") {
+      nextNamaz = globalResponse.data.maghrib_namaz.toString();
+    } else {
+      nextNamaz = globalResponse.data.isha_namaz.toString();
+    }
+
+    timeDifference.value = getDifferenceBetweenTwoTimes(
+      new Date().toISOString().substring(0, 10),
+      nextNamaz,
+      currentTime.value
+    );
+
+    todayNamazData = [
+      {
+        name: "Fajr",
+        icon: Sunrise,
+        value: response.data.fajr_namaz,
+        condition: currentNamaz.value == "Fajr",
+      },
+      {
+        name: "Zuhr",
+        icon: Sunrise,
+        value: response.data.zuhr_namaz,
+        condition: currentNamaz.value == "Zuhr",
+      },
+      {
+        name: "Asr",
+        icon: Sunrise,
+        value: response.data.asr_namaz,
+        condition: currentNamaz.value == "Asr",
+      },
+      {
+        name: "Maghrib",
+        icon: Sunset,
+        value: response.data.maghrib_namaz,
+        condition: currentNamaz.value == "Maghrib",
+      },
+      {
+        name: "Isha",
+        icon: Sunset,
+        value: response.data.isha_namaz,
+        condition: currentNamaz.value == "Isha",
+      },
+    ];
   }
 }, 1000);
 
-// Watch the timeDifference and log its value whenever it changes
-watch(timeDifference, (newVal) => {
-  console.log(newVal);
-});
+watch(timeDifference, (newVal) => {});
 </script>
 
 <template>
