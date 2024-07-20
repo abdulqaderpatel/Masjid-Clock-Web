@@ -7,18 +7,19 @@
     </p>
     <form class="flex flex-col" @submit.prevent="signup">
       <AuthLabel title="Name" />
-      <AuthInputBox v-model="formData.name" placeholder="Enter Name" />
+      <AuthInputBox v-model="formData.name" placeholder="Enter Name" class="mb-4" />
 
       <AuthLabel title="Email" />
-      <AuthInputBox v-model="formData.email" placeholder="Enter Email Address" :input-type="Input.EMAIL" />
+      <AuthInputBox v-model="formData.email" placeholder="Enter Email Address" :input-type="Input.EMAIL" class="mb-4" />
 
       <AuthLabel title="Password" />
-      <AuthInputBox v-model="formData.password" placeholder="Enter Password" :input-type="Input.PASSWORD" />
+      <AuthInputBox v-model="formData.password" class="mb-4" placeholder="Enter Password"
+        :input-type="Input.PASSWORD" />
 
       <AuthLabel title="Country" />
       <country-select
-        class="shadow bg-white border-gray-400 focus:outline-none focus:border-gray-900 border-2 rounded px-2 py-2 placeholder:text-base block mb-4"
-        v-model="formData.country" :country="formData.country" topCountry="US" />
+        class="shadow bg-white border-gray-400 focus:outline-none focus:border-gray-900 border-2 rounded px-2 py-2 placeholder:text-base block mb-4 "
+        v-model="formData.country" :country="formData.country" />
 
       <AuthLabel title="Region" />
       <region-select
@@ -32,11 +33,10 @@
       <textarea type="text" v-model="formData.address" placeholder="Enter Address" rows="4"
         class="shadow border-gray-400 focus:outline-none focus:border-gray-900 border-2 rounded px-2 py-2 placeholder:text-base block mb-8" />
 
-      <AppButton title="Register" />
+      <AppButton title="Register" :isLoading="isButtonLoading" />
     </form>
 
-    <Modal v-if="showModal" :show="showModal" title="Validation Error" :message="errorMessage"
-      @close="showModal = false" />
+    <Modal v-if="showModal" :show="showModal" title=" Error" :message="errorMessage" @close="showModal = false" />
   </div>
 </template>
 
@@ -49,6 +49,7 @@ import { Input } from "@/enums/Input";
 import { BASE_URL } from "@/global";
 import axios from "axios";
 import { ref } from "vue";
+import type ApiResponse from "@/models/ApiResponse";
 
 const formData = ref({
   name: "",
@@ -60,6 +61,7 @@ const formData = ref({
   address: "",
 });
 
+const isButtonLoading = ref(false);
 const showModal = ref(false);
 const errorMessage = ref("");
 
@@ -92,22 +94,41 @@ function validateForm() {
   return "";
 }
 
-function signup() {
+async function signup() {
+  isButtonLoading.value = true;
+  setTimeout(() => {
+
+  }, 3000)
+  console.log(isButtonLoading.value);
+
   const error = validateForm();
   if (error) {
+    isButtonLoading.value = false;
     errorMessage.value = error;
     showModal.value = true;
     return;
   }
 
-  axios
-    .post(`${BASE_URL}/masjid/register`, formData.value)
-    .then((response) => {
-      console.log(response.data);
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+  try {
+    const response: ApiResponse<string> = (await axios.post(`${BASE_URL}/masjid/register`, formData.value)).data;
+
+    console.log(response.data);
+
+  }
+
+  catch (e: any) {
+    errorMessage.value = "An error occured";
+    showModal.value = true;
+
+  }
+
+  finally {
+    isButtonLoading.value = false;
+  }
+
+
+
+
 }
 </script>
 

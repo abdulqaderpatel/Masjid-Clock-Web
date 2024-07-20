@@ -1,10 +1,10 @@
 <template>
     <div v-if="show" class="modal-overlay">
-        <div class="bg-white w-[200px]">
-            <div class="h-5 flex justify-center items-center p-4 pt-5 border">
+        <div class="bg-white w-[200px] rounded-md">
+            <div class="h-5 flex justify-center items-center p-4 pt-5 border rounded-t-md rounded-r-md">
                 <h3 class="font-bold">{{ title }}</h3>
             </div>
-            <div class="p-4 flex flex-col items-center border-black">
+            <div class="p-4 flex flex-col items-center border-black rounded-b-md rounded-l-md">
                 <p class="mb-2">{{ message }}</p>
                 <!-- <ModalButton title="Close" onclick="$emit('close')" /> -->
 

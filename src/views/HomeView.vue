@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import NamazCard from "@/components/namaz/NamazCard.vue";
 import { BASE_URL } from "@/global";
-import type Response from "@/models/Response";
+import type Response from "@/models/ApiResponse";
 import axios from "axios";
 import Sunrise from "@/assets/sunrise.png";
 import Sunset from "@/assets/sunset.png";
@@ -221,7 +221,7 @@ setInterval(() => {
   }
 }, 1000);
 
-watch(timeDifference, (newVal) => {});
+watch(timeDifference, (newVal) => { });
 </script>
 
 <template>
@@ -246,13 +246,9 @@ watch(timeDifference, (newVal) => {});
         <h3 class="text-xl text-gray-500 font-medium mb-3">
           {{ new Date().toUTCString().slice(0, -12) }}
         </h3>
-        <template v-for="namaz in todayNamazData"
-          ><NamazCard
-            :name="namaz.name"
-            :icon="namaz.icon"
-            :time="namaz.value"
-            :is-ongoing="namaz.condition"
-        /></template>
+        <template v-for="namaz in todayNamazData">
+          <NamazCard :name="namaz.name" :icon="namaz.icon" :time="namaz.value" :is-ongoing="namaz.condition" />
+        </template>
       </div>
     </div>
   </template>
