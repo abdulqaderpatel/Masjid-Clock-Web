@@ -1,12 +1,28 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from "vue-router";
-import { AUTH_TOKEN } from "./global";
+import { AUTH_TOKEN, BASE_URL } from "./global";
 import router from "./router";
+import axios from "axios";
+import { onMounted } from "vue";
 
-if (!localStorage.getItem(AUTH_TOKEN)) {
-  router.push("/signup");
-}
+onMounted(async () => {
+  if (!localStorage.getItem(AUTH_TOKEN)) {
+    router.push("/signup");
+    console.log("timepas");
+    return;
+  }
 
+  try {
+    const data = await axios.get(`${BASE_URL}/masjid/isVerified`, {
+      headers: {
+        "auth-token": `bearer ${localStorage.getItem(AUTH_TOKEN)}`,
+      },
+    });
+    router.push("/");
+  } catch (e) {
+    router.push("/verifyEmail");
+  }
+});
 </script>
 
 <template>
