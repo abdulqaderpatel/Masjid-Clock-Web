@@ -1,5 +1,12 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from "vue-router";
+import { AUTH_TOKEN } from "./global";
+import router from "./router";
+
+if (!localStorage.getItem(AUTH_TOKEN)) {
+  router.push("/signup");
+}
+
 </script>
 
 <template>
