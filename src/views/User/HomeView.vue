@@ -6,9 +6,10 @@ import axios from "axios";
 import Sunrise from "@/assets/sunrise.png";
 import Sunset from "@/assets/sunset.png";
 import { onMounted, ref, watch } from "vue";
+import type ApiResponse from "@/models/ApiResponse";
 
 const isLoading = ref(true);
-let response: Response;
+let response: ApiResponse<any>;
 
 let todayNamazData: any;
 const currentTime = ref(new Date().toLocaleTimeString());
@@ -19,7 +20,7 @@ let nextNamaz;
 
 const timeDifference = ref(0);
 
-let globalResponse: Response;
+let globalResponse: ApiResponse<any>;
 
 // Watch the timeDifference and log its value whenever it changes
 
@@ -221,7 +222,7 @@ setInterval(() => {
   }
 }, 1000);
 
-watch(timeDifference, (newVal) => { });
+watch(timeDifference, (newVal) => {});
 </script>
 
 <template>
@@ -247,7 +248,12 @@ watch(timeDifference, (newVal) => { });
           {{ new Date().toUTCString().slice(0, -12) }}
         </h3>
         <template v-for="namaz in todayNamazData">
-          <NamazCard :name="namaz.name" :icon="namaz.icon" :time="namaz.value" :is-ongoing="namaz.condition" />
+          <NamazCard
+            :name="namaz.name"
+            :icon="namaz.icon"
+            :time="namaz.value"
+            :is-ongoing="namaz.condition"
+          />
         </template>
       </div>
     </div>

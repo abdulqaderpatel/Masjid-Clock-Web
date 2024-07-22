@@ -21,8 +21,8 @@ const formData = ref({
   name: "",
   email: "",
   password: "",
-  country: "",
-  state: "",
+  country: "US",
+  state: "AK",
   city: "",
   address: "",
 });
@@ -108,68 +108,87 @@ async function signup() {
       Upload your masjid time table and we will handle it Lorem ipsum dolor sit
       amet consectetur adipisicing elit. Illum, harum.
     </p>
-    <form class="flex flex-col" @submit.prevent="signup">
-      <AuthLabel title="Name" />
-      <AuthInputBox
-        v-model="formData.name"
-        placeholder="Enter Name"
-        class="mb-4"
-      />
+    <form
+      class="md:container-xl grid grid-cols-1 md:grid-cols-2 gap-4 max-w-[800px]"
+      @submit.prevent="signup"
+    >
+      <div class="col-span-2 md:col-span-1">
+        <AuthInputBox
+          title="Name"
+          v-model="formData.name"
+          placeholder="Enter Name"
+        />
+      </div>
 
-      <AuthLabel title="Email" />
-      <AuthInputBox
-        v-model="formData.email"
-        placeholder="Enter Email Address"
-        :input-type="Input.EMAIL"
-        class="mb-4"
-      />
+      <div class="col-span-2 md:col-span-1">
+        <AuthInputBox
+          title="Email"
+          v-model="formData.email"
+          placeholder="Enter Email Address"
+          :input-type="Input.EMAIL"
+        />
+      </div>
 
-      <AuthLabel title="Password" />
-      <AuthInputBox
-        v-model="formData.password"
-        class="mb-4"
-        placeholder="Enter Password"
-        :input-type="Input.PASSWORD"
-      />
+      <div class="col-span-2 md:col-span-1">
+        <AuthInputBox
+          title="Password"
+          v-model="formData.password"
+          class="mb-4"
+          placeholder="Enter Password"
+          :input-type="Input.PASSWORD"
+        />
+      </div>
 
-      <AuthLabel title="Country" />
-      <country-select
-        class="shadow bg-white border-gray-400 focus:outline-none focus:border-gray-900 border-2 rounded px-2 py-2 placeholder:text-base block mb-4"
-        v-model="formData.country"
-        :country="formData.country"
-      />
+      <div class="col-span-2 md:col-span-1">
+        <AuthLabel title="Country" />
+        <country-select
+          class="shadow bg-white border-gray-400 focus:outline-none focus:border-gray-900 border-2 rounded px-2 py-2 placeholder:text-base block mb-4 w-full"
+          v-model="formData.country"
+          country="US"
+        />
+      </div>
 
-      <AuthLabel title="Region" />
-      <region-select
-        class="shadow bg-white border-gray-400 focus:outline-none focus:border-gray-900 border-2 rounded px-2 py-2 placeholder:text-base block mb-4"
-        v-model="formData.state"
-        :country="formData.country"
-        :region="formData.state"
-      />
+      <div class="col-span-2 md:col-span-1">
+        <AuthLabel title="Region" />
+        <region-select
+          class="shadow bg-white border-gray-400 focus:outline-none focus:border-gray-900 border-2 rounded px-2 py-2 placeholder:text-base block mb-4 w-full"
+          v-model="formData.state"
+          :country="formData.country"
+          :region="formData.state"
+        />
+      </div>
 
-      <AuthLabel title="City" />
-      <AuthInputBox
-        class="mb-4"
-        v-model="formData.city"
-        placeholder="Enter City"
-      />
+      <div class="col-span-2 md:col-span-1">
+        <AuthInputBox
+          title="City"
+          class="mb-4"
+          v-model="formData.city"
+          placeholder="Enter City"
+        />
+      </div>
 
-      <AuthLabel title="Address" />
-      <textarea
-        type="text"
-        v-model="formData.address"
-        placeholder="Enter Address"
-        rows="4"
-        class="shadow border-gray-400 focus:outline-none focus:border-gray-900 border-2 rounded px-2 py-2 placeholder:text-base block mb-8"
-      />
+      <div
+        class="col-span-2 md:row-span-2 flex flex-col justify-center align-center"
+      >
+        <AuthLabel title="Address" />
+        <textarea
+          type="text"
+          v-model="formData.address"
+          placeholder="Enter Address"
+          rows="4"
+          class="shadow border-gray-400 focus:outline-none focus:border-gray-900 border-2 rounded px-2 py-2 placeholder:text-base block mb-8 w-1/2"
+        />
+      </div>
 
-      <AppButton title="Register" :isLoading="isButtonLoading" />
+      <div class="col-span-2 flex justify-center">
+        <AppButton title="Register" :isLoading="isButtonLoading" />
+      </div>
     </form>
 
     <Modal
       v-if="showModal"
       :show="showModal"
-      title=" Error"
+      title="Error"
       :message="errorMessage"
       @close="showModal = false"
     />
