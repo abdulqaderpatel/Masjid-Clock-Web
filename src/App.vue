@@ -4,7 +4,15 @@ import { AUTH_TOKEN, BASE_URL } from "./global";
 import router from "./router";
 import axios from "axios";
 import { onMounted } from "vue";
+import { useMasjidStore } from "./stores/masjidStore";
+import type Masjid from "./models/Masjid";
+import { jwtDecode } from "jwt-decode";
 
+const masjidStore = useMasjidStore();
+
+const masjidData: Masjid = jwtDecode(localStorage.getItem(AUTH_TOKEN) || " ");
+
+masjidStore.setMasjid(masjidData);
 // onMounted(async () => {
 //   if (!localStorage.getItem(AUTH_TOKEN)) {
 //     router.push("/signup");

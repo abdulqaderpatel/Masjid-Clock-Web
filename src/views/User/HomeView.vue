@@ -7,6 +7,7 @@ import Sunrise from "@/assets/sunrise.png";
 import Sunset from "@/assets/sunset.png";
 import { onMounted, ref, watch } from "vue";
 import type ApiResponse from "@/models/ApiResponse";
+import { useMasjidStore } from "@/stores/masjidStore";
 
 const isLoading = ref(true);
 let response: ApiResponse<any>;
@@ -21,6 +22,12 @@ let nextNamaz;
 const timeDifference = ref(0);
 
 let globalResponse: ApiResponse<any>;
+
+const masjidStore = useMasjidStore();
+
+const masjidData = masjidStore.getMasjidData.id;
+
+console.log(masjidData);
 
 // Watch the timeDifference and log its value whenever it changes
 
@@ -79,7 +86,9 @@ function getNextNamazAccordingToTime(
 
 onMounted(async () => {
   const todaysDate = new Date().toISOString().substring(0, 10);
-  response = await (await axios(`${BASE_URL}/namaz/date/${todaysDate}`)).data;
+  response = await (
+    await axios(`${BASE_URL}/namaz/user/${masjidData}/date/${todaysDate}`)
+  ).data;
   globalResponse = response;
 
   currentNamaz.value = getNextNamazAccordingToTime(
@@ -239,7 +248,7 @@ watch(timeDifference, (newVal) => {});
             {{ currentNamaz }} in {{ secondsToHms(timeDifference) }}
           </p>
         </div>
-        <img src="../assets/mosque.png" alt="" width="80" height="150" />
+        <img src="../../assets/mosque.png" alt="" width="80" height="150" />
       </div>
       <div>
         <p class="text-gray-600 mb-3">Date</p>
