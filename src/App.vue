@@ -5,24 +5,24 @@ import router from "./router";
 import axios from "axios";
 import { onMounted } from "vue";
 
-onMounted(async () => {
-  if (!localStorage.getItem(AUTH_TOKEN)) {
-    router.push("/signup");
-    console.log("timepas");
-    return;
-  }
+// onMounted(async () => {
+//   if (!localStorage.getItem(AUTH_TOKEN)) {
+//     router.push("/signup");
+//     console.log("timepas");
+//     return;
+//   }
 
-  try {
-    const data = await axios.get(`${BASE_URL}/masjid/isVerified`, {
-      headers: {
-        "auth-token": `bearer ${localStorage.getItem(AUTH_TOKEN)}`,
-      },
-    });
-    router.push("/");
-  } catch (e) {
-    router.push("/verifyEmail");
-  }
-});
+//   try {
+//     const data = await axios.get(`${BASE_URL}/masjid/isVerified`, {
+//       headers: {
+//         "auth-token": `bearer ${localStorage.getItem(AUTH_TOKEN)}`,
+//       },
+//     });
+//     router.push("/");
+//   } catch (e) {
+//     router.push("/verifyEmail");
+//   }
+// });
 </script>
 
 <template>

@@ -2,15 +2,20 @@
 import AppButton from "@/components/AppButton.vue";
 import AuthInputBox from "@/components/AuthInputBox.vue";
 import AuthLabel from "@/components/AuthLabel.vue";
-import Modal from '../../components/popup/Modal.vue';
+import Modal from "../../components/popup/Modal.vue";
 import { Input } from "@/enums/Input";
-import { BASE_URL } from "@/global";
+import { AUTH_TOKEN, BASE_URL } from "@/global";
 import axios from "axios";
 import { ref } from "vue";
 import type ApiResponse from "@/models/ApiResponse";
 import router from "@/router";
 import { useRouter } from "vue-router";
 import VerifyEmail from "./VerifyEmail.vue";
+import { jwtDecode } from "jwt-decode";
+import type Masjid from "@/models/Masjid";
+import { useMasjidStore } from "@/stores/masjidStore";
+
+let masjidStore = useMasjidStore();
 
 const formData = ref({
   name: "",
@@ -25,7 +30,6 @@ const formData = ref({
 const isButtonLoading = ref(false);
 const showModal = ref(false);
 const errorMessage = ref("");
-
 
 function validateForm() {
   if (!formData.value.name) {
@@ -58,9 +62,7 @@ function validateForm() {
 
 async function signup() {
   isButtonLoading.value = true;
-  setTimeout(() => {
-
-  }, 3000)
+  setTimeout(() => {}, 3000);
   console.log(isButtonLoading.value);
 
   const error = validateForm();
@@ -72,29 +74,35 @@ async function signup() {
   }
 
   try {
-    const response: ApiResponse<string> = (await axios.post(`${BASE_URL}/masjid/register`, formData.value)).data;
+    const response: ApiResponse<string> = (
+      await axios.post(`${BASE_URL}/masjid/register`, formData.value)
+    ).data;
     localStorage.setItem("auth-token", response.data);
-    router.push({ name: "verifyEmail" });
-  }
 
-  catch (e: any) {
+    const masjidData: Masjid = jwtDecode(
+      localStorage.getItem(AUTH_TOKEN) || " "
+    );
+
+    masjidStore.setMasjid(masjidData);
+
+    console.log(masjidStore.getMasjidData);
+
+    console.log("timepass");
+
+    console.log(masjidData);
+
+    router.push({ name: "verifyEmail" });
+  } catch (e: any) {
     errorMessage.value = "An error occured";
     showModal.value = true;
-
-  }
-
-  finally {
+  } finally {
     isButtonLoading.value = false;
   }
-
-
-
-
 }
 </script>
 
 <template>
-  <div class=" mx-auto p-4 max-w-90 flex flex-col items-center gap-2">
+  <div class="mx-auto p-4 max-w-90 flex flex-col items-center gap-2">
     <h1 class="font-bold text-4xl self-center">Welcome to Masjid Clock</h1>
     <p class="text-gray-800 text-base mb-4">
       Upload your masjid time table and we will handle it Lorem ipsum dolor sit
@@ -102,36 +110,69 @@ async function signup() {
     </p>
     <form class="flex flex-col" @submit.prevent="signup">
       <AuthLabel title="Name" />
-      <AuthInputBox v-model="formData.name" placeholder="Enter Name" class="mb-4" />
+      <AuthInputBox
+        v-model="formData.name"
+        placeholder="Enter Name"
+        class="mb-4"
+      />
 
       <AuthLabel title="Email" />
-      <AuthInputBox v-model="formData.email" placeholder="Enter Email Address" :input-type="Input.EMAIL" class="mb-4" />
+      <AuthInputBox
+        v-model="formData.email"
+        placeholder="Enter Email Address"
+        :input-type="Input.EMAIL"
+        class="mb-4"
+      />
 
       <AuthLabel title="Password" />
-      <AuthInputBox v-model="formData.password" class="mb-4" placeholder="Enter Password"
-        :input-type="Input.PASSWORD" />
+      <AuthInputBox
+        v-model="formData.password"
+        class="mb-4"
+        placeholder="Enter Password"
+        :input-type="Input.PASSWORD"
+      />
 
       <AuthLabel title="Country" />
       <country-select
-        class="shadow bg-white border-gray-400 focus:outline-none focus:border-gray-900 border-2 rounded px-2 py-2 placeholder:text-base block mb-4 "
-        v-model="formData.country" :country="formData.country" />
+        class="shadow bg-white border-gray-400 focus:outline-none focus:border-gray-900 border-2 rounded px-2 py-2 placeholder:text-base block mb-4"
+        v-model="formData.country"
+        :country="formData.country"
+      />
 
       <AuthLabel title="Region" />
       <region-select
         class="shadow bg-white border-gray-400 focus:outline-none focus:border-gray-900 border-2 rounded px-2 py-2 placeholder:text-base block mb-4"
-        v-model="formData.state" :country="formData.country" :region="formData.state" />
+        v-model="formData.state"
+        :country="formData.country"
+        :region="formData.state"
+      />
 
       <AuthLabel title="City" />
-      <AuthInputBox class="mb-4" v-model="formData.city" placeholder="Enter City" />
+      <AuthInputBox
+        class="mb-4"
+        v-model="formData.city"
+        placeholder="Enter City"
+      />
 
       <AuthLabel title="Address" />
-      <textarea type="text" v-model="formData.address" placeholder="Enter Address" rows="4"
-        class="shadow border-gray-400 focus:outline-none focus:border-gray-900 border-2 rounded px-2 py-2 placeholder:text-base block mb-8" />
+      <textarea
+        type="text"
+        v-model="formData.address"
+        placeholder="Enter Address"
+        rows="4"
+        class="shadow border-gray-400 focus:outline-none focus:border-gray-900 border-2 rounded px-2 py-2 placeholder:text-base block mb-8"
+      />
 
       <AppButton title="Register" :isLoading="isButtonLoading" />
     </form>
 
-    <Modal v-if="showModal" :show="showModal" title=" Error" :message="errorMessage" @close="showModal = false" />
+    <Modal
+      v-if="showModal"
+      :show="showModal"
+      title=" Error"
+      :message="errorMessage"
+      @close="showModal = false"
+    />
   </div>
 </template>
 
