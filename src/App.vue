@@ -11,26 +11,29 @@ import { jwtDecode } from "jwt-decode";
 const masjidStore = useMasjidStore();
 
 const masjidData: Masjid = jwtDecode(localStorage.getItem(AUTH_TOKEN) || " ");
+console.log(masjidData);
 
 masjidStore.setMasjid(masjidData);
-// onMounted(async () => {
-//   if (!localStorage.getItem(AUTH_TOKEN)) {
-//     router.push("/signup");
-//     console.log("timepas");
-//     return;
-//   }
+console.log(masjidStore.getMasjidData());
 
-//   try {
-//     const data = await axios.get(`${BASE_URL}/masjid/isVerified`, {
-//       headers: {
-//         "auth-token": `bearer ${localStorage.getItem(AUTH_TOKEN)}`,
-//       },
-//     });
-//     router.push("/");
-//   } catch (e) {
-//     router.push("/verifyEmail");
-//   }
-// });
+onMounted(async () => {
+  if (!localStorage.getItem(AUTH_TOKEN)) {
+    router.push("/signup");
+    console.log("timepas");
+    return;
+  }
+
+  try {
+    const data = await axios.get(`${BASE_URL}/masjid/isVerified`, {
+      headers: {
+        "auth-token": `bearer ${localStorage.getItem(AUTH_TOKEN)}`,
+      },
+    });
+    router.push("/");
+  } catch (e) {
+    router.push("/verifyEmail");
+  }
+});
 </script>
 
 <template>

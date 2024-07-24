@@ -7,7 +7,9 @@ export const useMasjidStore = defineStore('masjidName', () => {
     let masjid: Masjid;
 
 
-    const getMasjidData = computed<Masjid>(() => masjid)
+    function getMasjidData(): Masjid {
+        return masjid;
+    }
     function setMasjid(masjidDetails: Masjid) {
         masjid = masjidDetails;
     }
