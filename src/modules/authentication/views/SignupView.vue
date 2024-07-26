@@ -2,7 +2,7 @@
 import AppButton from "@/components/AppButton.vue";
 import AuthInputBox from "@/components/AuthInputBox.vue";
 import AuthLabel from "@/components/AuthLabel.vue";
-import Modal from "../../components/popup/Modal.vue";
+import Modal from "@/components/popup/Modal.vue";
 import { Input } from "@/enums/Input";
 import { AUTH_TOKEN, BASE_URL } from "@/global";
 import axios from "axios";
@@ -10,15 +10,14 @@ import { ref } from "vue";
 import type ApiResponse from "@/models/ApiResponse";
 import router from "@/router";
 import { useRouter } from "vue-router";
-import VerifyEmail from "./VerifyEmail.vue";
 import { jwtDecode } from "jwt-decode";
 import type Masjid from "@/models/Masjid";
 import { useMasjidStore } from "@/stores/masjidStore";
 import AuthUserTypeCard from "@/components/AuthUserTypeCard.vue";
-import MasjidFilledIcon from "../../assets/mosque_icon_filled.png";
-import MasjidPlainIcon from "../../assets/mosque_icon_plain.png";
-import UserFilledIcon from "../../assets/user_icon_filled.png";
-import UserPlainIcon from "../../assets/user_icon_plain.png";
+import MasjidFilledIcon from "@/assets/mosque_icon_filled.png";
+import MasjidPlainIcon from "@/assets/mosque_icon_plain.png";
+import UserFilledIcon from "@/assets/user_icon_filled.png";
+import UserPlainIcon from "@/assets/user_icon_plain.png";
 
 let masjidStore = useMasjidStore();
 
@@ -125,7 +124,7 @@ async function signup() {
           </p>
         </div>
         <img
-          src="../../assets/masjid_register.jpg"
+          src="@/assets/masjid_register.jpg"
           width="400px"
           alt="masjid image"
         />

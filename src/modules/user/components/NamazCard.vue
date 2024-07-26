@@ -1,9 +1,9 @@
 <template>
-  <div
+  <tr
     class="flex justify-between items-center mb-2 hover:bg-gray-200 px-2"
-    :class="{ 'bg-green-300': isOngoing }"
+    v-bind:class="{ 'bg-green-300': isOngoing, 'bg-blue-100': !isOngoing }"
   >
-    <div class="flex items-center gap-3">
+    <td>
       <img :src="icon" alt="" width="40" />
       <p
         class="font-medium text-blue-500"
@@ -11,8 +11,8 @@
       >
         {{ name }}
       </p>
-    </div>
-    <div class="flex items-center gap-3">
+    </td>
+    <td>
       <p
         class="font-semibold text-blue-500"
         :class="{ 'text-red-600': isOngoing }"
@@ -25,9 +25,22 @@
           <template v-else> {{ time.substring(0, 5) }} a.m </template>
         </template>
       </p>
-      <!-- <img src="../../assets/volume-up.png" alt="" width="40" /> -->
-    </div>
-  </div>
+    </td>
+    <td>
+      <p
+        class="font-semibold text-blue-500"
+        :class="{ 'text-red-600': isOngoing }"
+      >
+        <template v-if="time">
+          <template v-if="time > '11:59'">
+            {{ convertTo12HourFormat(time) }}
+            p.m
+          </template>
+          <template v-else> {{ time.substring(0, 5) }} a.m </template>
+        </template>
+      </p>
+    </td>
+  </tr>
 </template>
 
 <script setup lang="ts">

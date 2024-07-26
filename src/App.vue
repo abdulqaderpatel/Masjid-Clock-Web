@@ -17,22 +17,21 @@ masjidStore.setMasjid(masjidData);
 console.log(masjidStore.getMasjidData());
 
 onMounted(async () => {
-  if (!localStorage.getItem(AUTH_TOKEN)) {
-    router.push("/signup");
-    console.log("timepas");
-    return;
-  }
-
-  try {
-    const data = await axios.get(`${BASE_URL}/masjid/isVerified`, {
-      headers: {
-        "auth-token": `bearer ${localStorage.getItem(AUTH_TOKEN)}`,
-      },
-    });
-    router.push("/");
-  } catch (e) {
-    router.push("/verifyEmail");
-  }
+  // if (!localStorage.getItem(AUTH_TOKEN)) {
+  //   router.push("/signup");
+  //   console.log("timepas");
+  //   return;
+  // }
+  // try {
+  //   const data = await axios.get(`${BASE_URL}/masjid/isVerified`, {
+  //     headers: {
+  //       "auth-token": `bearer ${localStorage.getItem(AUTH_TOKEN)}`,
+  //     },
+  //   });
+  //   router.push("/");
+  // } catch (e) {
+  //   router.push("/verifyEmail");
+  // }
 });
 </script>
 

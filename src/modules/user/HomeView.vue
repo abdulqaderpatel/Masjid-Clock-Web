@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import NamazCard from "@/components/namaz/NamazCard.vue";
+import NamazCard from "@/modules/user/components/NamazCard.vue";
 import { BASE_URL } from "@/global";
 import type Response from "@/models/ApiResponse";
 import axios from "axios";
@@ -9,6 +9,7 @@ import { computed, onMounted, ref, watch } from "vue";
 import type ApiResponse from "@/models/ApiResponse";
 import { useMasjidStore } from "@/stores/masjidStore";
 import { Namaz } from "@/enums/Namaz";
+import TableLayout from "@/layouts/TableLayout.vue";
 
 const isLoading = ref(true);
 let response: ApiResponse<any>;
@@ -107,16 +108,16 @@ function getNextNamazAccordingToTime(
 function createNamazTableFromData(todaysDate: string) {
   currentNamaz.value = getNextNamazAccordingToTime(
     currentTime.value,
-    response.data.fajr_azan,
     response.data.fajr_namaz,
-    response.data.zuhr_azan,
+    response.data.fajr_jamat,
     response.data.zuhr_namaz,
-    response.data.asr_azan,
+    response.data.zuhr_jamat,
     response.data.asr_namaz,
-    response.data.maghrib_azan,
+    response.data.asr_jamat,
     response.data.maghrib_namaz,
-    response.data.isha_azan,
+    response.data.maghrib_jamat,
     response.data.isha_namaz,
+    response.data.isha_jamat,
     currentNamaz.value
   );
 
@@ -197,6 +198,7 @@ setInterval(() => {
     timeDifference.value--;
   } else {
     const todaysDate = new Date().toISOString().substring(0, 10);
+    console.log(todaysDate);
 
     currentTime.value = new Date().toLocaleTimeString();
     createNamazTableFromData(todaysDate);
@@ -209,8 +211,8 @@ setInterval(() => {
     <h1>Loading</h1>
   </template>
   <template v-else>
-    <div class="p-4 container">
-      <h2>Mumbai, India</h2>
+    <div class="p-4 mx-auto max-w-[800px] lg:font lg:text-2xl">
+      <h2 class="font-semibold text-lg text-gray-800">Mumbai, India</h2>
       <div class="flex justify-between items-center">
         <div>
           <h1 class="text-4xl font-semibold">{{}}</h1>
@@ -228,14 +230,17 @@ setInterval(() => {
           {{ new Date().toUTCString().slice(0, -12) }}
         </h3>
 
-        <template v-for="namaz in todayNamazData">
-          <NamazCard
-            :name="namaz.name"
-            :icon="namaz.icon"
-            :time="namaz.value"
-            :is-ongoing="namaz.condition"
-          />
-        </template>
+        <TableLayout class="min-w-[1000px]">
+          <template v-for="namaz in todayNamazData">
+            <NamazCard
+              class="min-w-[150px]"
+              :name="namaz.name"
+              :icon="namaz.icon"
+              :time="namaz.value"
+              :is-ongoing="namaz.condition"
+            />
+          </template>
+        </TableLayout>
       </div>
     </div>
   </template>
