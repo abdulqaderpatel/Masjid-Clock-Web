@@ -1,10 +1,10 @@
 <template>
   <tr
-    class="flex justify-between items-center mb-2 hover:bg-gray-200 px-2"
+    class="hover:bg-gray-200 h-[50px] px-4 py-2"
     v-bind:class="{ 'bg-green-300': isOngoing, 'bg-blue-100': !isOngoing }"
   >
-    <td>
-      <img :src="icon" alt="" width="40" />
+    <td class="w-[200px] p-4">
+      <!-- <img :src="icon" alt="" width="40" /> -->
       <p
         class="font-medium text-blue-500"
         :class="{ 'text-red-600': isOngoing }"
@@ -12,31 +12,31 @@
         {{ name }}
       </p>
     </td>
-    <td>
+    <td class="w-[200px] p-4">
       <p
         class="font-semibold text-blue-500"
         :class="{ 'text-red-600': isOngoing }"
       >
-        <template v-if="time">
-          <template v-if="time > '11:59'">
-            {{ convertTo12HourFormat(time) }}
+        <template v-if="startTime">
+          <template v-if="startTime > '11:59'">
+            {{ convertTo12HourFormat(startTime) }}
             p.m
           </template>
-          <template v-else> {{ time.substring(0, 5) }} a.m </template>
+          <template v-else> {{ startTime.substring(0, 5) }} a.m </template>
         </template>
       </p>
     </td>
-    <td>
+    <td class="p-4">
       <p
         class="font-semibold text-blue-500"
         :class="{ 'text-red-600': isOngoing }"
       >
-        <template v-if="time">
-          <template v-if="time > '11:59'">
-            {{ convertTo12HourFormat(time) }}
+        <template v-if="endTime">
+          <template v-if="endTime > '11:59'">
+            {{ convertTo12HourFormat(endTime) }}
             p.m
           </template>
-          <template v-else> {{ time.substring(0, 5) }} a.m </template>
+          <template v-else> {{ endTime.substring(0, 5) }} a.m </template>
         </template>
       </p>
     </td>
@@ -63,7 +63,11 @@ function convertTo12HourFormat(time24: string) {
 defineProps({
   name: String,
   icon: String,
-  time: {
+  startTime: {
+    type: String,
+    required: true,
+  },
+  endTime: {
     type: String,
     required: true,
   },

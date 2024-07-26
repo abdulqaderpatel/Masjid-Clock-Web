@@ -2,7 +2,7 @@
 
 <template>
   <table>
-    <slot></slot>
+    <slot class=""></slot>
   </table>
 </template>
 

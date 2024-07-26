@@ -148,31 +148,36 @@ function createNamazTableFromData(todaysDate: string) {
     {
       name: "Fajr",
       icon: Sunrise,
-      value: response.data.fajr_namaz,
+      startTime: response.data.fajr_namaz,
+      endTime: response.data.fajr_jamat,
       condition: currentNamaz.value == "Fajr",
     },
     {
       name: "Zuhr",
       icon: Sunrise,
-      value: response.data.zuhr_namaz,
+      startTime: response.data.zuhr_namaz,
+      endTime: response.data.zuhr_jamat,
       condition: currentNamaz.value == "Zuhr",
     },
     {
       name: "Asr",
       icon: Sunrise,
-      value: response.data.asr_namaz,
+      startTime: response.data.asr_namaz,
+      endTime: response.data.asr_jamat,
       condition: currentNamaz.value == "Asr",
     },
     {
       name: "Maghrib",
       icon: Sunset,
-      value: response.data.maghrib_namaz,
+      startTime: response.data.maghrib_namaz,
+      endTime: response.data.maghrib_jamat,
       condition: currentNamaz.value == "Maghrib",
     },
     {
       name: "Isha",
       icon: Sunset,
-      value: response.data.isha_namaz,
+      startTime: response.data.isha_namaz,
+      endTime: response.data.isha_jamat,
       condition: currentNamaz.value == "Isha",
     },
   ];
@@ -211,36 +216,47 @@ setInterval(() => {
     <h1>Loading</h1>
   </template>
   <template v-else>
-    <div class="p-4 mx-auto max-w-[800px] lg:font lg:text-2xl">
+    <div class="p-4 mx-auto max-w-[800px] text-xl lg:text-2xl">
       <h2 class="font-semibold text-lg text-gray-800">Mumbai, India</h2>
       <div class="flex justify-between items-center">
         <div>
-          <h1 class="text-4xl font-semibold">{{}}</h1>
           <p class="text-gray-600 font-medium text-xl">
             Next Namaz: {{ currentNamaz }} in
             {{ secondsToHms(timeDifference) }}
           </p>
         </div>
-        <img src="../../assets/mosque.png" alt="" width="80" height="150" />
+        <img src="@/assets/mosque.png" alt="" width="80" height="150" />
       </div>
       <div>
         <p class="text-gray-600 mb-3">Date</p>
         <h2 class="text-2xl font-medium">17 Jummada Al-Awwal 1445</h2>
-        <h3 class="text-xl text-gray-500 font-medium mb-3">
+        <h3 class="text-xl text-gray-500 font-medium mb-10">
           {{ new Date().toUTCString().slice(0, -12) }}
         </h3>
-
-        <TableLayout class="min-w-[1000px]">
-          <template v-for="namaz in todayNamazData">
-            <NamazCard
-              class="min-w-[150px]"
-              :name="namaz.name"
-              :icon="namaz.icon"
-              :time="namaz.value"
-              :is-ongoing="namaz.condition"
-            />
-          </template>
-        </TableLayout>
+        <div class="flex justify-center">
+          <TableLayout>
+            <tr class="bg-green-100 h-[50px] px-4 py-2">
+              <td class="w-[200px] p-4">
+                <p class="font-medium text-black">Namaz</p>
+              </td>
+              <td class="w-[200px] p-4">
+                <p class="font-semibold text-black">Start Time</p>
+              </td>
+              <td class="p-4">
+                <p class="font-semibold text-black">End Time</p>
+              </td>
+            </tr>
+            <template v-for="namaz in todayNamazData">
+              <NamazCard
+                :name="namaz.name"
+                :icon="namaz.icon"
+                :startTime="namaz.startTime"
+                :end-time="namaz.endTime"
+                :is-ongoing="namaz.condition"
+              />
+            </template>
+          </TableLayout>
+        </div>
       </div>
     </div>
   </template>
