@@ -1,21 +1,50 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import NamazFileInput from "@/modules/masjid/components/NamazFileInput.vue";
+import {ref} from "vue";
+import axios from "axios";
+import {BASE_URL} from "@/global";
+import AppButton from "@/components/AppButton.vue";
+import Modal from "@/components/popup/Modal.vue";
+
+const selectedFile = ref(null);
+
+const isModalShow = ref(false);
+const handleFileUpload = (event) => {
+  selectedFile.value = event.target.files[0];
+};
+
+const submitFile = async () => {
+  if (!selectedFile.value) {
+    alert('No file selected');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('file', selectedFile.value);
+  formData.append('id', 1);
+
+  try {
+    const response = await axios.post(`${BASE_URL}/masjid/upload`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    console.log('File uploaded successfully:', response.data);
+    isModalShow.value = true;
+  } catch (error) {
+    console.error('Error uploading file:', error);
+  }
+};
+
+
+</script>
 
 <template>
   <div class="mx-auto h-screen flex flex-col justify-center items-center">
-    <div
-      class="h-[150px] w-[150px] flex justify-center items-center border-2 border-dotted border-black mb-2"
-    >
-      <!-- <i class="fa-solid fa-plus"> </i> -->
-
-      <input
-        className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-foreground file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-        id="picture"
-        name="picture"
-        type="file"
-      />
-    </div>
-
-    <h1 class="text-xl font-bold">Add a file to upload</h1>
+    <Modal title="File Uploaded" message="" :show="isModalShow" @close="isModalShow=false"/>
+    <h1 class="text-xl font-bold mb-5">Add a Namaz File to upload</h1>
+    <NamazFileInput @change="handleFileUpload" :is-uploaded="selectedFile===null" class="mb-5"/>
+    <AppButton @click="submitFile" title="upload"/>
   </div>
 </template>
 

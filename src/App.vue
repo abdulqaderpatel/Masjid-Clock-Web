@@ -1,42 +1,43 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from "vue-router";
-import { AUTH_TOKEN, BASE_URL } from "./global";
+import {RouterLink, RouterView} from "vue-router";
+import {AUTH_TOKEN, BASE_URL} from "./global";
 import router from "./router";
 import axios from "axios";
-import { onMounted } from "vue";
-import { useMasjidStore } from "./stores/masjidStore";
+import {onMounted} from "vue";
+import {useMasjidStore} from "./stores/masjidStore";
 import type Masjid from "./models/Masjid";
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 
 const masjidStore = useMasjidStore();
 
-const masjidData: Masjid = jwtDecode(localStorage.getItem(AUTH_TOKEN) || " ");
-console.log(masjidData);
 
-masjidStore.setMasjid(masjidData);
 console.log(masjidStore.getMasjidData());
 
 onMounted(async () => {
-  // if (!localStorage.getItem(AUTH_TOKEN)) {
-  //   router.push("/signup");
-  //   console.log("timepas");
-  //   return;
-  // }
-  // try {
-  //   const data = await axios.get(`${BASE_URL}/masjid/isVerified`, {
-  //     headers: {
-  //       "auth-token": `bearer ${localStorage.getItem(AUTH_TOKEN)}`,
-  //     },
-  //   });
-  //   router.push("/");
-  // } catch (e) {
-  //   router.push("/verifyEmail");
-  // }
+  if (!localStorage.getItem(AUTH_TOKEN)) {
+    await router.push("/signup");
+    console.log("timepas");
+    return;
+  }
+
+  const masjidData: Masjid = jwtDecode(localStorage.getItem(AUTH_TOKEN) || "");
+  masjidStore.setMasjid(masjidData);
+  console.log(masjidData);
+  try {
+    const data = await axios.get(`${BASE_URL}/masjid/isVerified`, {
+      headers: {
+        "auth-token": `bearer ${localStorage.getItem(AUTH_TOKEN)}`,
+      },
+    });
+   
+  } catch (e) {
+    await router.push("/verifyEmail");
+  }
 });
 </script>
 
 <template>
-  <RouterView />
+  <RouterView/>
 </template>
 
 <style scoped>
