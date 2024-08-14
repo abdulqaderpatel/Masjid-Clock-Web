@@ -11,6 +11,7 @@ const selectedFile = ref(null);
 const isModalShow = ref(false);
 const handleFileUpload = (event) => {
   selectedFile.value = event.target.files[0];
+
 };
 
 const submitFile = async () => {
@@ -40,10 +41,10 @@ const submitFile = async () => {
 </script>
 
 <template>
-  <div class="mx-auto h-screen flex flex-col justify-center items-center">
+  <div class="mx-auto h-screen flex flex-col justify-center items-center p-4">
     <Modal title="File Uploaded" message="" :show="isModalShow" @close="isModalShow=false"/>
     <h1 class="text-xl font-bold mb-5">Add a Namaz File to upload</h1>
-    <NamazFileInput @change="handleFileUpload" :is-uploaded="selectedFile===null" class="mb-5"/>
+    <NamazFileInput @change="handleFileUpload" :is-uploaded="selectedFile!=null" class="mb-5"/>
     <AppButton @click="submitFile" title="upload"/>
   </div>
 </template>

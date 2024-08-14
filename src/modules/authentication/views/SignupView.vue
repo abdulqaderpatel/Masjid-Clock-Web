@@ -193,7 +193,7 @@ async function signup() {
           <AuthLabel title="Country"/>
           <country-select
               placeholder="no"
-              class="shadow bg-white border-gray-100 focus:outline-none focus:border-gray-900 border-2 rounded px-2 py-2 placeholder:text-base block mb-4 w-full"
+              class="shadow bg-white border-gray-200 focus:outline-none focus:border-gray-900 border-2 rounded px-2 py-2 placeholder:text-base block mb-4 w-full"
               v-model="formData.country"
               country="US"
           />
@@ -202,7 +202,7 @@ async function signup() {
         <div class="col-span-2 md:col-span-1">
           <AuthLabel title="Region"/>
           <region-select
-              class="shadow bg-white border-gray-100 focus:outline-none focus:border-gray-900 border-2 rounded px-2 py-2 placeholder:text-base block mb-4 w-full"
+              class="shadow bg-white border-gray-200 focus:outline-none focus:border-gray-900 border-2 rounded px-2 py-2 placeholder:text-base block mb-4 w-full"
               v-model="formData.state"
               :country="formData.country"
               :region="formData.state"
@@ -225,7 +225,7 @@ async function signup() {
               v-model="formData.address"
               placeholder="Enter Address"
               rows="4"
-              class="shadow border-gray-100 focus:outline-none focus:border-gray-900 border-2 rounded px-2 py-2 placeholder:text-base block mb-8 w-full"
+              class="shadow border-gray-200 focus:outline-none focus:border-gray-900 border-2 rounded px-2 py-2 placeholder:text-base block mb-8 w-full"
           />
         </div>
 

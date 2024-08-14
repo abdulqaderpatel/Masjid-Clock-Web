@@ -4,7 +4,7 @@
       v-model="model"
       :placeholder="placeholder"
       :type="inputType"
-      class="shadow border-gray-100 focus:outline-none focus:border-gray-900 border-2 rounded px-2 py-2 placeholder:text-base w-full"
+      class="shadow border-gray-200 focus:outline-none focus:border-gray-900 border-2 rounded px-2 py-2 placeholder:text-base w-full"
   />
 </template>
 
