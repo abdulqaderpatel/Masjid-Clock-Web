@@ -1,20 +1,21 @@
-import { ref, computed } from 'vue'
-import { defineStore } from 'pinia'
-import type Masjid from '@/models/Masjid'
+// stores/masjidStore.ts
+import {defineStore} from 'pinia';
+import {computed, ref} from 'vue';
+import type Masjid from '@/models/Masjid';
 
-export const useMasjidStore = defineStore('masjidName', () => {
+export const useMasjidStore = defineStore('masjidStore', () => {
+    const masjid = ref<Masjid | null>(null);
 
-    let masjid: Masjid;
 
+    function setMasjid(masjidData: Masjid) {
 
-    function getMasjidData(): Masjid {
-        return masjid;
+        masjid.value = masjidData;
+        
     }
-    function setMasjid(masjidDetails: Masjid) {
-        masjid = masjidDetails;
-    }
 
-    return { getMasjidData, setMasjid }
-})
+    const isVerified = computed(() => {
+        return masjid.value?.address != "";
+    })
 
-
+    return {masjid, isVerified, setMasjid,};
+});

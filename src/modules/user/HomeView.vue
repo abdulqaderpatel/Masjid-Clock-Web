@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import NamazCard from "@/modules/user/components/NamazCard.vue";
-import { BASE_URL } from "@/global";
+import {BASE_URL} from "@/global";
 import type Response from "@/models/ApiResponse";
 import axios from "axios";
 import Sunrise from "@/assets/sunrise.png";
 import Sunset from "@/assets/sunset.png";
-import { computed, onMounted, ref, watch } from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import type ApiResponse from "@/models/ApiResponse";
-import { useMasjidStore } from "@/stores/masjidStore";
-import { Namaz } from "@/enums/Namaz";
+import {useMasjidStore} from "@/stores/masjidStore";
+import {Namaz} from "@/enums/Namaz";
 import TableLayout from "@/layouts/TableLayout.vue";
 
 const isLoading = ref(true);
@@ -40,7 +40,7 @@ const timeDifference = ref(0);
 
 const masjidStore = useMasjidStore();
 
-const masjidData = masjidStore.getMasjidData().id;
+const masjidData = masjidStore.masjid?.id;
 
 console.log(masjidData);
 
@@ -48,9 +48,9 @@ console.log(masjidData);
 
 //get time difference between two dates in seconds
 function getDifferenceBetweenTwoTimes(
-  date: string,
-  namazTime: string,
-  currentTime: string
+    date: string,
+    namazTime: string,
+    currentTime: string
 ) {
   console.log(namazTime);
   console.log(currentTime);
@@ -77,18 +77,18 @@ function secondsToHms(sec: any) {
 
 //checks the time and returns whichever namaz is currently ongoing
 function getNextNamazAccordingToTime(
-  time: string,
-  fajr_azan: string,
-  fajr_jamat: string,
-  zuhr_azan: string,
-  zuhr_jamat: string,
-  asr_azan: string,
-  asr_jamat: string,
-  maghrib_azan: string,
-  maghrib_jamat: string,
-  isha_azan: string,
-  isha_jamat: string,
-  namaz: string
+    time: string,
+    fajr_azan: string,
+    fajr_jamat: string,
+    zuhr_azan: string,
+    zuhr_jamat: string,
+    asr_azan: string,
+    asr_jamat: string,
+    maghrib_azan: string,
+    maghrib_jamat: string,
+    isha_azan: string,
+    isha_jamat: string,
+    namaz: string
 ) {
   if (time >= fajr_azan && time < fajr_jamat) {
     namaz = "Fajr";
@@ -107,19 +107,20 @@ function getNextNamazAccordingToTime(
 
 function createNamazTableFromData(todaysDate: string) {
   currentNamaz.value = getNextNamazAccordingToTime(
-    currentTime.value,
-    response.data.fajr_namaz,
-    response.data.fajr_jamat,
-    response.data.zuhr_namaz,
-    response.data.zuhr_jamat,
-    response.data.asr_namaz,
-    response.data.asr_jamat,
-    response.data.maghrib_namaz,
-    response.data.maghrib_jamat,
-    response.data.isha_namaz,
-    response.data.isha_jamat,
-    currentNamaz.value
+      currentTime.value,
+      response.data.fajr_namaz,
+      response.data.fajr_jamat,
+      response.data.zuhr_namaz,
+      response.data.zuhr_jamat,
+      response.data.asr_namaz,
+      response.data.asr_jamat,
+      response.data.maghrib_namaz,
+      response.data.maghrib_jamat,
+      response.data.isha_namaz,
+      response.data.isha_jamat,
+      currentNamaz.value
   );
+
 
   console.log(currentNamaz.value);
 
@@ -137,9 +138,9 @@ function createNamazTableFromData(todaysDate: string) {
   console.log(nextNamazTime);
 
   timeDifference.value = getDifferenceBetweenTwoTimes(
-    todaysDate,
-    nextNamazTime,
-    currentTime.value
+      todaysDate,
+      nextNamazTime,
+      currentTime.value
   );
 
   console.log(currentNamaz.value);
@@ -186,7 +187,7 @@ function createNamazTableFromData(todaysDate: string) {
 onMounted(async () => {
   const todaysDate = new Date().toISOString().substring(0, 10);
   response = await (
-    await axios(`${BASE_URL}/namaz/user/${masjidData}/date/${todaysDate}`)
+      await axios(`${BASE_URL}/namaz/user/${masjidData}/date/${todaysDate}`)
   ).data;
   createNamazTableFromData(todaysDate);
 
@@ -209,13 +210,22 @@ setInterval(() => {
     createNamazTableFromData(todaysDate);
   }
 }, 1000);
+
+
 </script>
 
 <template>
+  <div>
+
+
+  </div>
+
   <template v-if="isLoading">
     <h1>Loading</h1>
+
   </template>
   <template v-else>
+
     <div class="p-4 mx-auto max-w-[800px] text-xl lg:text-2xl">
       <h2 class="font-semibold text-lg text-gray-800">Mumbai, India</h2>
       <div class="flex justify-between items-center">
@@ -225,7 +235,7 @@ setInterval(() => {
             {{ secondsToHms(timeDifference) }}
           </p>
         </div>
-        <img src="@/assets/mosque.png" alt="" width="80" height="150" />
+        <img src="@/assets/mosque.png" alt="" width="80" height="150"/>
       </div>
       <div>
         <p class="text-gray-600 mb-3">Date</p>
@@ -248,11 +258,11 @@ setInterval(() => {
             </tr>
             <template v-for="namaz in todayNamazData">
               <NamazCard
-                :name="namaz.name"
-                :icon="namaz.icon"
-                :startTime="namaz.startTime"
-                :end-time="namaz.endTime"
-                :is-ongoing="namaz.condition"
+                  :name="namaz.name"
+                  :icon="namaz.icon"
+                  :startTime="namaz.startTime"
+                  :end-time="namaz.endTime"
+                  :is-ongoing="namaz.condition"
               />
             </template>
           </TableLayout>

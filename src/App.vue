@@ -1,105 +1,54 @@
 <script setup lang="ts">
-import {RouterLink, RouterView} from "vue-router";
+import {RouterView} from "vue-router";
 import {AUTH_TOKEN, BASE_URL} from "./global";
 import router from "./router";
 import axios from "axios";
-import {onMounted} from "vue";
+import {onMounted, ref} from "vue";
 import {useMasjidStore} from "./stores/masjidStore";
 import type Masjid from "./models/Masjid";
 import {jwtDecode} from "jwt-decode";
 
+import UserNavigationBar from "@/components/navigation/UserNavigationBar.vue";
+
 const masjidStore = useMasjidStore();
 
-
-console.log(masjidStore.getMasjidData());
+const isLoading = ref(true);
 
 onMounted(async () => {
-  if (!localStorage.getItem(AUTH_TOKEN)) {
+  const authToken = localStorage.getItem(AUTH_TOKEN);
+
+  if (authToken == null) {
+    isLoading.value = false;
     await router.push("/signup");
-    console.log("timepas");
     return;
   }
 
-  const masjidData: Masjid = jwtDecode(localStorage.getItem(AUTH_TOKEN) || "");
-  masjidStore.setMasjid(masjidData);
-  console.log(masjidData);
   try {
-    const data = await axios.get(`${BASE_URL}/masjid/isVerified`, {
+    const masjidData: Masjid = jwtDecode(authToken || '');
+    masjidStore.setMasjid(masjidData);
+
+    const response = await axios.get(`${BASE_URL}/masjid/isVerified`, {
       headers: {
-        "auth-token": `bearer ${localStorage.getItem(AUTH_TOKEN)}`,
+        "auth-token": `bearer ${authToken}`,
       },
     });
-   
+
+    // Ensure this sets the verification state
+    isLoading.value = false;
+
+    await router.push("/");
   } catch (e) {
+    isLoading.value = false;
     await router.push("/verifyEmail");
   }
 });
 </script>
 
 <template>
-  <RouterView/>
+  <div v-if="isLoading">Loading...</div>
+  <div v-else>
+    <!-- Show navbar only when the user is verified -->
+    <UserNavigationBar v-if="masjidStore.isVerified"/>
+    <RouterView class="mt-20"/>
+  </div>
 </template>
-
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
-</style>
