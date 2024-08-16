@@ -17,10 +17,13 @@ const isLoading = ref(true);
 onMounted(async () => {
   const authToken = localStorage.getItem(AUTH_TOKEN);
 
+  console.log(authToken)
   if (authToken == null) {
     isLoading.value = false;
+    console.log(masjidStore.isVerified);
     await router.push("/signup");
     return;
+
   }
 
   try {
@@ -47,8 +50,8 @@ onMounted(async () => {
 <template>
   <div v-if="isLoading">Loading...</div>
   <div v-else>
-    <!-- Show navbar only when the user is verified -->
+
     <UserNavigationBar v-if="masjidStore.isVerified"/>
-    <RouterView class="mt-20"/>
+    <RouterView class="mt-20" :class="{'mt-0':!masjidStore.isVerified}"/>
   </div>
 </template>

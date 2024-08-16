@@ -10,11 +10,11 @@ export const useMasjidStore = defineStore('masjidStore', () => {
     function setMasjid(masjidData: Masjid) {
 
         masjid.value = masjidData;
-        
+
     }
 
     const isVerified = computed(() => {
-        return masjid.value?.address != "";
+        return masjid.value?.address != "" && masjid.value?.address != null;
     })
 
     return {masjid, isVerified, setMasjid,};

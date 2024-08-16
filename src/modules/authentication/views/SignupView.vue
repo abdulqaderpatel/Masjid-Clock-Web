@@ -84,7 +84,6 @@ async function masjidSignup() {
 
     masjidStore.setMasjid(masjidData);
 
-    console.log(masjidStore.getMasjidData);
 
     console.log("timepass");
 
@@ -101,10 +100,6 @@ async function masjidSignup() {
 
 
 async function signup() {
-  isButtonLoading.value = true;
-  setTimeout(() => {
-  }, 3000);
-  console.log(isButtonLoading.value);
 
   const error = validateForm();
   if (error) {
@@ -232,6 +227,12 @@ async function signup() {
         <div class="col-span-2 flex justify-center">
           <AppButton title="Register" :isLoading="isButtonLoading"/>
         </div>
+        <p class="col-span-2 text-center">Already have an account?
+          <span>    <RouterLink to="/login" class="text-blue-800">Login</RouterLink>
+        </span>
+        </p>
+
+
       </form>
     </div>
     <Modal

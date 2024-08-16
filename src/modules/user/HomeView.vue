@@ -215,10 +215,7 @@ setInterval(() => {
 </script>
 
 <template>
-  <div>
-
-
-  </div>
+  
 
   <template v-if="isLoading">
     <h1>Loading</h1>
