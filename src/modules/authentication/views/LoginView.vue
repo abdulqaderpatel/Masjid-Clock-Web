@@ -9,11 +9,12 @@ import {ref} from "vue";
 import type ApiResponse from "@/models/ApiResponse";
 import router from "@/router";
 import {jwtDecode} from "jwt-decode";
-import type Masjid from "@/models/Masjid";
-import {useMasjidStore} from "@/stores/masjidStore";
+import type User from "@/models/User";
+import {useUserStore} from "@/stores/userStore";
+import {UserType} from "@/enums/UserType";
 
 
-let masjidStore = useMasjidStore();
+let userStore = useUserStore();
 
 const formData = ref({
   email: "",
@@ -61,11 +62,19 @@ async function login() {
     ).data;
     localStorage.setItem("auth-token", response.data);
 
-    const masjidData: Masjid = jwtDecode(
+    const masjidData: User = jwtDecode(
         localStorage.getItem(AUTH_TOKEN) || " "
     );
 
-    masjidStore.setMasjid(masjidData);
+    if (masjidData.masjidId) {
+      masjidData.type = UserType.USER;
+      localStorage.setItem("type", UserType.USER);
+    } else {
+      masjidData.type = UserType.MASJID
+      localStorage.setItem("type", UserType.MASJID);
+    }
+
+    userStore.setUser(masjidData);
 
     await router.push({name: "home"});
   } catch (e: any) {

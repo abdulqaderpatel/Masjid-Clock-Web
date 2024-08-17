@@ -10,15 +10,18 @@ import {ref} from "vue";
 import type ApiResponse from "@/models/ApiResponse";
 import router from "@/router";
 import {jwtDecode} from "jwt-decode";
-import type Masjid from "@/models/Masjid";
-import {useMasjidStore} from "@/stores/masjidStore";
+import type User from "@/models/User";
+import {useUserStore} from "@/stores/userStore";
 import AuthUserTypeCard from "@/components/AuthUserTypeCard.vue";
 import MasjidFilledIcon from "@/assets/mosque_icon_filled.png";
 import MasjidPlainIcon from "@/assets/mosque_icon_plain.png";
 import UserFilledIcon from "@/assets/user_icon_filled.png";
 import UserPlainIcon from "@/assets/user_icon_plain.png";
+import {UserType} from "@/enums/UserType";
 
-let masjidStore = useMasjidStore();
+
+let userStore = useUserStore();
+
 
 const formData = ref({
   name: "",
@@ -68,7 +71,28 @@ function validateForm() {
 }
 
 async function userSignup() {
+  try {
+    const response: ApiResponse<string> = (
+        await axios.post(`${BASE_URL}/user/register`, formData.value)
+    ).data;
+    localStorage.setItem("auth-token", response.data);
 
+    const userData: User = jwtDecode(
+        localStorage.getItem(AUTH_TOKEN) || " "
+    );
+
+    userData.type = UserType.USER;
+    localStorage.setItem("type", UserType.USER);
+    userStore.setUser(userData);
+
+
+    await router.push({name: "verifyEmail"});
+  } catch (e: any) {
+    errorMessage.value = "An error occured";
+    showModal.value = true;
+  } finally {
+    isButtonLoading.value = false;
+  }
 }
 
 async function masjidSignup() {
@@ -78,16 +102,15 @@ async function masjidSignup() {
     ).data;
     localStorage.setItem("auth-token", response.data);
 
-    const masjidData: Masjid = jwtDecode(
+    const masjidData: User = jwtDecode(
         localStorage.getItem(AUTH_TOKEN) || " "
     );
 
-    masjidStore.setMasjid(masjidData);
+    masjidData.type = UserType.MASJID;
+    localStorage.setItem("type", UserType.MASJID);
 
+    userStore.setUser(masjidData);
 
-    console.log("timepass");
-
-    console.log(masjidData);
 
     await router.push({name: "verifyEmail"});
   } catch (e: any) {
@@ -125,7 +148,7 @@ async function signup() {
       <div class="hidden md:w-[400px] lg:w[500px] bg-blue-500 lg:flex flex-col">
         <div class="p-4">
           <h1 class="font-bold text-4xl text-center text-white mb-3">
-            Masjid Clock
+            User Clock
           </h1>
           <p class="text-gray-300 mb-3 text-2xl font-semibold text-center">
             Your masjid Schedule, our responsibility

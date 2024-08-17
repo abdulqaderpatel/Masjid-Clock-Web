@@ -7,7 +7,7 @@ import Sunrise from "@/assets/sunrise.png";
 import Sunset from "@/assets/sunset.png";
 import {computed, onMounted, ref, watch} from "vue";
 import type ApiResponse from "@/models/ApiResponse";
-import {useMasjidStore} from "@/stores/masjidStore";
+import {useUserStore} from "@/stores/userStore";
 import {Namaz} from "@/enums/Namaz";
 import TableLayout from "@/layouts/TableLayout.vue";
 
@@ -38,7 +38,7 @@ let nextNamazTime;
 
 const timeDifference = ref(0);
 
-const masjidStore = useMasjidStore();
+const masjidStore = useUserStore();
 
 const masjidData = masjidStore.masjid?.id;
 
@@ -215,7 +215,7 @@ setInterval(() => {
 </script>
 
 <template>
-  
+
 
   <template v-if="isLoading">
     <h1>Loading</h1>

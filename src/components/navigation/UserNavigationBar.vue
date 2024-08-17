@@ -2,7 +2,7 @@
   <nav class="bg-white border-b fixed top-0 left-0 w-full z-30">
     <div class="flex items-center space-x-8 py-3 px-4 max-w-screen-xl mx-auto md:px-8">
       <div class="flex-none lg:flex-initial">
-        <a href="javascript:void(0)">
+        <a>
           <img src="https://www.floatui.com/logo.svg" width="120" height="50" alt="Float UI logo"/>
         </a>
       </div>
