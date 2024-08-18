@@ -38,9 +38,9 @@ let nextNamazTime;
 
 const timeDifference = ref(0);
 
-const masjidStore = useUserStore();
+const userStore = useUserStore();
 
-const masjidData = masjidStore.masjid?.id;
+const masjidData = userStore.user!.id
 
 console.log(masjidData);
 
@@ -120,7 +120,6 @@ function createNamazTableFromData(todaysDate: string) {
       response.data.isha_jamat,
       currentNamaz.value
   );
-
 
   console.log(currentNamaz.value);
 
@@ -210,19 +209,13 @@ setInterval(() => {
     createNamazTableFromData(todaysDate);
   }
 }, 1000);
-
-
 </script>
 
 <template>
-
-
   <template v-if="isLoading">
     <h1>Loading</h1>
-
   </template>
   <template v-else>
-
     <div class="p-4 mx-auto max-w-[800px] text-xl lg:text-2xl">
       <h2 class="font-semibold text-lg text-gray-800">Mumbai, India</h2>
       <div class="flex justify-between items-center">
