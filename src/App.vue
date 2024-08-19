@@ -61,7 +61,7 @@ onMounted(async () => {
   <div v-else>
     <template v-if="userStore.isVerified">
 
-      <UserNavigationBar v-if="type == UserType.USER"/>
+      <UserNavigationBar v-if="type == UserType.USER" class="mb-20"/>
       <MasjidNavigationBar v-if="type == UserType.MASJID"/>
     </template>
     <RouterView class="mt-20" :class="{'mt-0':!userStore.isVerified}"/>

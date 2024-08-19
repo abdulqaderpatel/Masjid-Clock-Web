@@ -9,7 +9,7 @@ import Modal from "@/components/popup/Modal.vue";
 const selectedFile = ref(null);
 
 const isModalShow = ref(false);
-const handleFileUpload = (event) => {
+const handleFileUpload = (event: any) => {
   selectedFile.value = event.target.files[0];
 
 };
@@ -22,7 +22,7 @@ const submitFile = async () => {
 
   const formData = new FormData();
   formData.append('file', selectedFile.value);
-  formData.append('id', 1);
+  formData.append('id', "1");
 
   try {
     const response = await axios.post(`${BASE_URL}/masjid/upload`, formData, {

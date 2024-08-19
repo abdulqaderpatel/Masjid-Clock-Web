@@ -1,5 +1,5 @@
 <template>
-  <nav class="bg-white w-full border-b md:border-0 md:static">
+  <nav class="sticky top-0 bg-white w-full border-b md:border-0 md:static z-50">
     <div class="items-center px-4 max-w-screen-xl mx-auto md:flex md:px-8">
       <div class="flex items-center justify-between py-3 md:py-5 md:block">
         <a href="javascript:void(0)">
@@ -24,7 +24,7 @@
       </div>
       <div class="flex-1 justify-self-center pb-3 mt-8 md:block md:pb-0 md:mt-0" :class="[open ? 'block' : 'hidden']">
         <ul class="justify-center items-center space-y-8 md:flex md:space-x-6 md:space-y-0">
-          <li v-for="link in navigation" :key="link.id" class="text-gray-600 hover:text-indigo-600">
+          <li v-for="link in navigation" class="text-gray-600 hover:text-indigo-600">
             <a :href="link.router">
               {{ link.title }} masjid nav
             </a>
