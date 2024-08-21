@@ -34,7 +34,7 @@ const menuState = ref(false);
 
 // Navigation items
 const navigation = [
-  {title: "Home", path: "javascript:void"},
+  {title: "Home", path: "/"},
   {title: "Ramadan", path: "javascript:void(0)"},
   {title: "Settings", path: "javascript:void(0)"},
 ];

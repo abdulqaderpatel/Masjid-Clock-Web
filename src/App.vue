@@ -32,18 +32,25 @@ onMounted(async () => {
   try {
     const masjidData: User = jwtDecode(authToken || '');
     userStore.setUser(masjidData);
-    if (masjidData.masjidId) {
-      masjidData.type = UserType.USER;
-    } else {
+
+    const isMasjid = await axios.get(`${BASE_URL}/masjid/isMasjid/${userStore.user!.email}`);
+
+    console.log(isMasjid.data.data);
+    if (isMasjid.data.data) {
       masjidData.type = UserType.MASJID
+    } else {
+      masjidData.type = UserType.USER;
     }
 
+    console.log(masjidData.type);
 
-    const response = await axios.get(`${BASE_URL}/masjid/isVerified`, {
+    const response = await axios.get(`${BASE_URL}/${masjidData.type}/isVerified`, {
       headers: {
         "auth-token": `bearer ${authToken}`,
       },
     });
+
+    console.log(response.data)
 
     // Ensure this sets the verification state
     isLoading.value = false;
