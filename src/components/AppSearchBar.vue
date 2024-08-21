@@ -5,6 +5,8 @@ const menuState = ref(false);
 const toggleMenu = () => {
   menuState.value = !menuState.value;
 };
+
+const model = defineModel()
 </script>
 
 <template>
@@ -15,8 +17,8 @@ const toggleMenu = () => {
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
       </svg>
-      <input class="w-full outline-none appearance-none placeholder-gray-500 text-gray-500 sm:w-auto" type="text"
-             placeholder="Search"/>
+      <input class="w-full outline-none appearance-none placeholder-gray-500 text-gray-800 sm:w-auto" type="text"
+             v-model="model" placeholder="Search"/>
     </form>
     <button class="outline-none text-gray-400 block lg:hidden" @click="toggleMenu">
       <svg v-if="menuState" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"

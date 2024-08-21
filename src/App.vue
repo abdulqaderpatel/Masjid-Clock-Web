@@ -55,7 +55,12 @@ onMounted(async () => {
     // Ensure this sets the verification state
     isLoading.value = false;
 
-    await router.push("/");
+    if (masjidData.type == UserType.USER) {
+      await router.push("/namaz");
+    } else {
+
+      await router.push("/");
+    }
   } catch (e) {
     isLoading.value = false;
     await router.push("/verifyEmail");

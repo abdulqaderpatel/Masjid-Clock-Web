@@ -184,6 +184,10 @@ function createNamazTableFromData(todaysDate: string) {
 }
 
 onMounted(async () => {
+  if (!userStore.user!.masjidId) {
+
+    return;
+  }
   const todaysDate = new Date().toISOString().substring(0, 10);
   response = await (
       await axios(`${BASE_URL}/namaz/user/${14}/date/${todaysDate}`)
@@ -198,68 +202,95 @@ onMounted(async () => {
 // used to make the clock tick in time backwards,
 //until it reaches zero and hence a function is trigggered,
 // to get the current namaz according to the time
-setInterval(() => {
-  if (timeDifference.value > 0) {
-    timeDifference.value--;
-  } else {
-    const todaysDate = new Date().toISOString().substring(0, 10);
-    console.log(todaysDate);
+if (userStore.user!.masjidId != null) {
+  setInterval(() => {
+    if (timeDifference.value > 0) {
+      timeDifference.value--;
+    } else {
+      const todaysDate = new Date().toISOString().substring(0, 10);
+      console.log(todaysDate);
 
-    currentTime.value = new Date().toLocaleTimeString();
-    createNamazTableFromData(todaysDate);
-  }
-}, 1000);
+      currentTime.value = new Date().toLocaleTimeString();
+      createNamazTableFromData(todaysDate);
+    }
+  }, 1000);
+}
 </script>
 
 <template>
-  <template v-if="isLoading">
-    <h1>Loading</h1>
+  <template v-if="userStore.user!.masjidId==null">
+
+    <section
+    >
+      <div
+          class="max-w-screen h-[calc(100dvh-80px)]  px-4 text-center md:px-8 flex flex-col justify-center items-center">
+        <div class="max-w-xl space-y-3 md:mx-auto">
+
+          <p class="text-gray-800 text-3xl font-semibold sm:text-4xl">
+            No Masjids followed
+          </p>
+          <p class="text-gray-600">
+            Follow a masjid to view their timings here
+          </p>
+          <RouterLink to="/search"
+                      class="inline-block py-2 px-4 text-white font-medium bg-gray-800 duration-150 hover:bg-gray-700 active:bg-gray-900 rounded-lg shadow-md hover:shadow-none">
+            View masjids
+          </RouterLink>
+        </div>
+
+
+      </div>
+    </section>
   </template>
   <template v-else>
-    <div class="p-4 mx-auto max-w-[800px] text-xl lg:text-2xl">
-      <h1>dfkj</h1>
-      <h1>kljklj</h1>
-      <h2 class="font-semibold text-lg text-gray-800">Mumbai, India</h2>
-      <div class="flex justify-between items-center">
+
+    <template v-if="isLoading">
+      <h1>Loading</h1>
+    </template>
+    <template v-else>
+      <div class="p-4 mx-auto max-w-[800px] text-xl lg:text-2xl">
+        <h2 class="font-semibold text-lg text-gray-800">Mumbai, India</h2>
+        <div class="flex justify-between items-center">
+          <div>
+            <p class="text-gray-600 font-medium text-xl">
+              Next Namaz: {{ currentNamaz }} in
+              {{ secondsToHms(timeDifference) }}
+            </p>
+          </div>
+          <img src="@/assets/mosque.png" alt="" width="80" height="150"/>
+        </div>
         <div>
-          <p class="text-gray-600 font-medium text-xl">
-            Next Namaz: {{ currentNamaz }} in
-            {{ secondsToHms(timeDifference) }}
-          </p>
-        </div>
-        <img src="@/assets/mosque.png" alt="" width="80" height="150"/>
-      </div>
-      <div>
-        <p class="text-gray-600 mb-3">Date</p>
-        <h2 class="text-2xl font-medium">17 Jummada Al-Awwal 1445</h2>
-        <h3 class="text-xl text-gray-500 font-medium mb-10">
-          {{ new Date().toUTCString().slice(0, -12) }}
-        </h3>
-        <div class="flex justify-center">
-          <TableLayout>
-            <tr class="bg-green-100 h-[50px] px-4 py-2">
-              <td class="w-[200px] p-4">
-                <p class="font-medium text-black">Namaz</p>
-              </td>
-              <td class="w-[200px] p-4">
-                <p class="font-semibold text-black">Start Time</p>
-              </td>
-              <td class="p-4">
-                <p class="font-semibold text-black">End Time</p>
-              </td>
-            </tr>
-            <template v-for="namaz in todayNamazData">
-              <NamazCard
-                  :name="namaz.name"
-                  :icon="namaz.icon"
-                  :startTime="namaz.startTime"
-                  :end-time="namaz.endTime"
-                  :is-ongoing="namaz.condition"
-              />
-            </template>
-          </TableLayout>
+          <p class="text-gray-600 mb-3">Date</p>
+          <h2 class="text-2xl font-medium">17 Jummada Al-Awwal 1445</h2>
+          <h3 class="text-xl text-gray-500 font-medium mb-10">
+            {{ new Date().toUTCString().slice(0, -12) }}
+          </h3>
+          <div class="flex justify-center">
+            <TableLayout>
+              <tr class="bg-green-100 h-[50px] px-4 py-2">
+                <td class="w-[200px] p-4">
+                  <p class="font-medium text-black">Namaz</p>
+                </td>
+                <td class="w-[200px] p-4">
+                  <p class="font-semibold text-black">Start Time</p>
+                </td>
+                <td class="p-4">
+                  <p class="font-semibold text-black">End Time</p>
+                </td>
+              </tr>
+              <template v-for="namaz in todayNamazData">
+                <NamazCard
+                    :name="namaz.name"
+                    :icon="namaz.icon"
+                    :startTime="namaz.startTime"
+                    :end-time="namaz.endTime"
+                    :is-ongoing="namaz.condition"
+                />
+              </template>
+            </TableLayout>
+          </div>
         </div>
       </div>
-    </div>
+    </template>
   </template>
 </template>

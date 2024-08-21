@@ -217,8 +217,6 @@ setInterval(() => {
   </template>
   <template v-else>
     <div class="p-4 mx-auto max-w-[800px] text-xl lg:text-2xl">
-      <h1>dfkj</h1>
-      <h1>kljklj</h1>
       <h2 class="font-semibold text-lg text-gray-800">Mumbai, India</h2>
       <div class="flex justify-between items-center">
         <div>
