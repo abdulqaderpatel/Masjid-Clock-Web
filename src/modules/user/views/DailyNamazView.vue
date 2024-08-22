@@ -184,13 +184,15 @@ function createNamazTableFromData(todaysDate: string) {
 }
 
 onMounted(async () => {
+  console.log(userStore.user!.masjidId);
   if (!userStore.user!.masjidId) {
-
+    console.log("does not exist")
     return;
   }
+  console.log("does exist")
   const todaysDate = new Date().toISOString().substring(0, 10);
   response = await (
-      await axios(`${BASE_URL}/namaz/user/${14}/date/${todaysDate}`)
+      await axios(`${BASE_URL}/namaz/user/${userStore.user!.masjidId}/date/${todaysDate}`)
   ).data;
   createNamazTableFromData(todaysDate);
 

@@ -40,28 +40,50 @@ onMounted(async () => {
       masjidData.type = UserType.MASJID
     } else {
       masjidData.type = UserType.USER;
+   
     }
 
-    console.log(masjidData.type);
 
-    const response = await axios.get(`${BASE_URL}/${masjidData.type}/isVerified`, {
-      headers: {
-        "auth-token": `bearer ${authToken}`,
-      },
-    });
+    try {
 
-    console.log(response.data)
+      await axios.get(`${BASE_URL}/${masjidData.type}/isVerified`, {
+        headers: {
+          "auth-token": `bearer ${authToken}`,
+        },
+      });
 
-    // Ensure this sets the verification state
-    isLoading.value = false;
+      console.log(masjidData.masjidId)
+      if (masjidData.type == UserType.USER) {
+        try {
+          console.log(masjidData.id)
+          const data = await axios.get(`${BASE_URL}/user/masjidId/${masjidData.id}`);
 
-    if (masjidData.type == UserType.USER) {
-      await router.push("/namaz");
-    } else {
+          masjidData.masjidId = data.data.data;
 
-      await router.push("/");
+        } catch (e) {
+          console.log("User does not have a masjid id");
+        }
+      }
+
+      console.log("DSfdssdfdsfds")
+
+
+      // Ensure this sets the verification state
+      isLoading.value = false;
+
+      if (masjidData.type == UserType.USER) {
+        await router.push("/namaz");
+      } else {
+
+        await router.push("/");
+      }
+    } catch (e) {
+      console.log("timeapass")
     }
+
+
   } catch (e) {
+    console.log("verify email")
     isLoading.value = false;
     await router.push("/verifyEmail");
   }
@@ -73,7 +95,7 @@ onMounted(async () => {
   <div v-else>
     <template v-if="userStore.isVerified">
 
-      <UserNavigationBar v-if="type == UserType.USER" class="mb-20"/>
+      <UserNavigationBar v-if="type == UserType.USER"/>
       <MasjidNavigationBar v-if="type == UserType.MASJID"/>
     </template>
     <RouterView class="mt-20" :class="{'mt-0':!userStore.isVerified}"/>
