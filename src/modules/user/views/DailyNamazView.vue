@@ -184,7 +184,7 @@ function createNamazTableFromData(todaysDate: string) {
 }
 
 onMounted(async () => {
-  console.log(userStore.user!.masjidId);
+
   if (!userStore.user!.masjidId) {
     console.log("does not exist")
     return;

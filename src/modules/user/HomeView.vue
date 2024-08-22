@@ -224,6 +224,9 @@ setInterval(() => {
             Next Namaz: {{ currentNamaz }} in
             {{ secondsToHms(timeDifference) }}
           </p>
+          <h1>lkjlkj</h1>
+
+          <h1>kllkjkl</h1>
         </div>
         <img src="@/assets/mosque.png" alt="" width="80" height="150"/>
       </div>

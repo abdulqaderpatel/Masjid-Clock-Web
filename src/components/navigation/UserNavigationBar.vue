@@ -1,26 +1,39 @@
+<script setup lang="ts">
+import {ref} from 'vue';
+import {useRoute, RouterView} from "vue-router";
+import AppLogo from '@/assets/app_logo.png';
+
+const menuState = ref(false);
+
+const navigation = [
+  {title: "Home", path: "/namaz"},
+  {title: "Ramadan", path: "/ramadan"},
+  {title: "Settings", path: "/settings"},
+];
+
+const toggleMenu = () => {
+  menuState.value = !menuState.value;
+};
+</script>
+
 <template>
-  <nav class="bg-white border-b fixed top-0 left-0 w-full z-30">
-    <div class="flex items-center space-x-8 py-3 px-4 max-w-screen-xl mx-auto md:px-8">
+  <nav class="fixed top-0 left-0 bg-white w-full border-b z-50" style="height: 80px;">
+    <div class="flex items-center space-x-8 h-full px-4 max-w-screen-xl mx-auto md:px-8">
       <div class="flex-none lg:flex-initial">
         <a>
-          <img src="https://www.floatui.com/logo.svg" width="120" height="50" alt="Float UI logo"/>
+          <img :src="AppLogo" width="50" alt="Float UI logo"/>
         </a>
       </div>
       <div class="flex-1 flex items-center justify-between">
         <div
             :class="['bg-white absolute z-20 w-full top-16 left-0 p-4 border-b lg:static lg:block lg:border-none', { 'hidden': !menuState }]">
           <ul class="mt-12 space-y-5 lg:flex lg:space-x-6 lg:space-y-0 lg:mt-0">
-
             <li v-for="link in navigation" :key="link.id" class="text-gray-600 hover:text-indigo-600">
-              <RouterLink :to="link.path" :class="{'text-blue-800':useRoute().path==link.path}"
-              >
+              <RouterLink :to="link.path" :class="{'text-blue-800':useRoute().path == link.path}">
                 {{ link.title }}
               </RouterLink>
             </li>
-
-
           </ul>
-
         </div>
 
         <div class="flex-1 flex items-center justify-end space-x-2 sm:space-x-6">
@@ -43,34 +56,10 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>
             </svg>
           </button>
-
         </div>
       </div>
     </div>
   </nav>
+
+
 </template>
-
-<script setup lang="ts">
-import {ref} from 'vue';
-import AppSearchBar from "@/components/AppSearchBar.vue";
-import {useRoute, useRouter} from "vue-router";
-
-// State variables
-const menuState = ref(false);
-
-// Navigation items
-const navigation = [
-  {title: "Home", path: "/namaz"},
-  {title: "Ramadan", path: "/ramadan"},
-  {title: "Settings", path: "/settings"},
-];
-
-// Methods
-const toggleMenu = () => {
-  menuState.value = !menuState.value;
-};
-</script>
-
-<style scoped>
-/* Add additional styles here if needed */
-</style>

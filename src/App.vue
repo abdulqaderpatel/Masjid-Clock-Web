@@ -20,10 +20,10 @@ const type = localStorage.getItem(TYPE);
 onMounted(async () => {
   const authToken = localStorage.getItem(AUTH_TOKEN);
 
-  console.log(authToken)
+
   if (authToken == null) {
     isLoading.value = false;
-    console.log(userStore.isVerified);
+
     await router.push("/signup");
     return;
 
@@ -35,12 +35,12 @@ onMounted(async () => {
 
     const isMasjid = await axios.get(`${BASE_URL}/masjid/isMasjid/${userStore.user!.email}`);
 
-    console.log(isMasjid.data.data);
+
     if (isMasjid.data.data) {
       masjidData.type = UserType.MASJID
     } else {
       masjidData.type = UserType.USER;
-   
+
     }
 
 
@@ -52,10 +52,10 @@ onMounted(async () => {
         },
       });
 
-      console.log(masjidData.masjidId)
+
       if (masjidData.type == UserType.USER) {
         try {
-          console.log(masjidData.id)
+
           const data = await axios.get(`${BASE_URL}/user/masjidId/${masjidData.id}`);
 
           masjidData.masjidId = data.data.data;
@@ -64,8 +64,6 @@ onMounted(async () => {
           console.log("User does not have a masjid id");
         }
       }
-
-      console.log("DSfdssdfdsfds")
 
 
       // Ensure this sets the verification state
@@ -94,10 +92,18 @@ onMounted(async () => {
   <div v-if="isLoading">Loading...</div>
   <div v-else>
     <template v-if="userStore.isVerified">
-
       <UserNavigationBar v-if="type == UserType.USER"/>
       <MasjidNavigationBar v-if="type == UserType.MASJID"/>
     </template>
-    <RouterView class="mt-20" :class="{'mt-0':!userStore.isVerified}"/>
+    <div class="content-wrapper">
+      <RouterView/>
+    </div>
   </div>
 </template>
+
+<style scoped>
+/* Ensure there's enough padding at the top of the content */
+.content-wrapper {
+  padding-top: 80px; /* Same as navbar height */
+}
+</style>
