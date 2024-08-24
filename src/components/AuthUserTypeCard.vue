@@ -17,6 +17,7 @@ defineEmits(["onCardClick"]);
   >
     <template v-if="isSelected">
       <img :src="selectedIcon" width="75" alt=""/>
+      <h1>timepass</h1>
     </template>
     <template v-else>
       <img :src="unSelectedIcon" width="75" alt=""/>
