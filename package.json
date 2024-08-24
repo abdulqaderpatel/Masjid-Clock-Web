@@ -11,6 +11,8 @@
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
+    "@volar/language-core": "^2.4.0-alpha.20",
+    "@volar/language-server": "^2.4.0-alpha.20",
     "axios": "^1.7.2",
     "jwt-decode": "^4.0.0",
     "pinia": "^2.1.7",

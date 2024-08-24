@@ -62,7 +62,7 @@ const getMasjidsWithTheSpecificSubstring = async (substring: string) => {
   console.log(isDataLoaded.value)
 };
 
-const followMasjid = async (masjidId: Number, index: Number) => {
+const followMasjid = async (masjidId: number, index: Number) => {
   try {
     (
         await axios.put(`${BASE_URL}/user/masjidId`, {
