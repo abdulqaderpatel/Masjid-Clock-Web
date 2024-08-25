@@ -14,9 +14,40 @@ import LeftArrow from "@/assets/left_arrow.png";
 import RightArrow from "@/assets/right_arrow.png";
 import {useRoute, useRouter} from "vue-router";
 import {useNamazStore} from "@/stores/namazStore";
+import router from "@/router";
 
-const dateParam = useRoute().params.date.toString();
+const route = useRoute();
+
+const dateParam = route.params.date.toString();
 console.log(dateParam)
+
+watch(() => route.params.date.toString(), async (newRoute) => {
+  console.log(newRoute)
+  if (!userStore.user!.masjidId) {
+    console.log("does not exist")
+    return;
+  }
+  if (namazStore.getNamaz(newRoute)) {
+    return;
+  }
+  namazStore.isLoading = true;
+  console.log("does exist")
+  const todaysDate = new Date().toISOString().substring(0, 10);
+  namazStore.setNamaz(await (
+      await axios(`${BASE_URL}/namaz/user/${userStore.user!.masjidId}/date/${newRoute}`)
+  ).data.data);
+
+  date.value = new Date(newRoute).toUTCString().slice(0, -12)
+  console.log(namazStore.namaz)
+  console.log(namazStore.getNamaz(dateParam))
+  createNamazTableFromData(newRoute);
+
+  console.log(currentNamaz.value);
+
+  namazStore.isLoading = false;
+});
+
+const date = ref(new Date(dateParam).toUTCString().slice(0, -12))
 
 
 let todayNamazData: any;
@@ -148,48 +179,86 @@ function createNamazTableFromData(todaysDate: string) {
     {
       name: "Fajr",
       icon: Sunrise,
-      startTime: namazStore.getNamaz(dateParam)?.fajr_namaz.toString(),
-      endTime: namazStore.getNamaz(dateParam)?.fajr_jamat.toString(),
+      startTime: namazStore.getNamaz(todaysDate.toString())?.fajr_namaz.toString(),
+      endTime: namazStore.getNamaz(todaysDate.toString())?.fajr_jamat.toString(),
       condition: currentNamaz.value == "Fajr",
     },
     {
       name: "Zuhr",
       icon: Sunrise,
-      startTime: namazStore.getNamaz(dateParam)?.zuhr_namaz.toString(),
-      endTime: namazStore.getNamaz(dateParam)?.zuhr_jamat.toString(),
+      startTime: namazStore.getNamaz(todaysDate.toString())?.zuhr_namaz.toString(),
+      endTime: namazStore.getNamaz(todaysDate.toString())?.zuhr_jamat.toString(),
       condition: currentNamaz.value == "Zuhr",
     },
     {
       name: "Asr",
       icon: Sunrise,
-      startTime: namazStore.getNamaz(dateParam)?.asr_namaz.toString(),
-      endTime: namazStore.getNamaz(dateParam)?.asr_namaz.toString(),
+      startTime: namazStore.getNamaz(todaysDate.toString())?.asr_namaz.toString(),
+      endTime: namazStore.getNamaz(todaysDate.toString())?.asr_namaz.toString(),
       condition: currentNamaz.value == "Asr",
     },
     {
       name: "Maghrib",
       icon: Sunset,
-      startTime: namazStore.getNamaz(dateParam)?.maghrib_namaz.toString(),
-      endTime: namazStore.getNamaz(dateParam)?.maghrib_namaz.toString(),
+      startTime: namazStore.getNamaz(todaysDate.toString())?.maghrib_namaz.toString(),
+      endTime: namazStore.getNamaz(todaysDate.toString())?.maghrib_namaz.toString(),
       condition: currentNamaz.value == "Maghrib",
     },
     {
       name: "Isha",
       icon: Sunset,
-      startTime: namazStore.getNamaz(dateParam)?.isha_namaz.toString(),
-      endTime: namazStore.getNamaz(dateParam)?.isha_namaz.toString(),
+      startTime: namazStore.getNamaz(todaysDate.toString())?.isha_namaz.toString(),
+      endTime: namazStore.getNamaz(todaysDate.toString())?.isha_namaz.toString(),
       condition: currentNamaz.value == "Isha",
     },
   ];
+
+  console.log(todayNamazData)
+}
+
+function addOneDay(dateString: string): string {
+  // Parse the date string into a Date object
+  const date = new Date(dateString);
+
+  // Add one day (24 hours) to the date
+  date.setDate(date.getDate() + 1);
+
+  // Format the date back to a string (YYYY-MM-DD format)
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
+
+function subtractOneDay(dateString: string): string {
+  // Parse the date string into a Date object
+  const date = new Date(dateString);
+
+  // Subtract one day (24 hours) from the date
+  date.setDate(date.getDate() - 1);
+
+  // Format the date back to a string (YYYY-MM-DD format)
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
+
+function goToNextPage() {
+  router.push(`/namaz/${addOneDay(dateParam)}`)
 }
 
 onMounted(async () => {
-
-  namazStore.isLoading = true;
   if (!userStore.user!.masjidId) {
     console.log("does not exist")
     return;
   }
+  if (namazStore.getNamaz(dateParam)) {
+    return;
+  }
+  namazStore.isLoading = true;
   console.log("does exist")
   const todaysDate = new Date().toISOString().substring(0, 10);
   namazStore.setNamaz(await (
@@ -204,6 +273,7 @@ onMounted(async () => {
 
   namazStore.isLoading = false;
 });
+
 
 // used to make the clock tick in time backwards,
 //until it reaches zero and hence a function is triggered,
@@ -272,7 +342,7 @@ if (userStore.user!.masjidId != null) {
             <p class="text-gray-600 mb-3">Date</p>
             <h2 class="text-2xl font-medium">17 Jummada Al-Awwal 1445</h2>
             <h3 class="text-xl text-gray-500 font-medium mb-10">
-              {{ new Date().toUTCString().slice(0, -12) }}
+              {{ date }}
             </h3>
             <div class="flex justify-center">
               <TableLayout>
@@ -301,7 +371,7 @@ if (userStore.user!.masjidId != null) {
           </div>
         </div>
 
-        <img :src="RightArrow" alt="right arrow" class="flex-none w-10 h-10">
+        <img :src="RightArrow" alt="right arrow" class="flex-none w-10 h-10" @click="goToNextPage">
       </div>
 
     </template>
