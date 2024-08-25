@@ -10,9 +10,14 @@ import type ApiResponse from "@/models/ApiResponse";
 import {useUserStore} from "@/stores/userStore";
 import {Namaz} from "@/enums/Namaz";
 import TableLayout from "@/layouts/TableLayout.vue";
+import LeftArrow from "@/assets/left_arrow.png";
+import RightArrow from "@/assets/right_arrow.png";
+import {useRoute, useRouter} from "vue-router";
+import {useNamazStore} from "@/stores/namazStore";
 
-const isLoading = ref(true);
-let response: ApiResponse<any>;
+const dateParam = useRoute().params.date.toString();
+console.log(dateParam)
+
 
 let todayNamazData: any;
 const currentTime = ref(new Date().toLocaleTimeString());
@@ -39,12 +44,10 @@ let nextNamazTime;
 const timeDifference = ref(0);
 
 const userStore = useUserStore();
+const namazStore = useNamazStore();
 
 const masjidData = userStore.user!.id
 
-console.log(masjidData);
-
-// Watch the timeDifference and log its value whenever it changes
 
 //get time difference between two dates in seconds
 function getDifferenceBetweenTwoTimes(
@@ -52,8 +55,7 @@ function getDifferenceBetweenTwoTimes(
     namazTime: string,
     currentTime: string
 ) {
-  console.log(namazTime);
-  console.log(currentTime);
+
 
   const namazDate = new Date(date + "T" + namazTime.toString());
   const currentDate = new Date(date + "T" + currentTime.toString());
@@ -77,26 +79,26 @@ function secondsToHms(sec: any) {
 
 //checks the time and returns whichever namaz is currently ongoing
 function getNextNamazAccordingToTime(
-    time: string,
-    fajr_azan: string,
-    fajr_jamat: string,
-    zuhr_azan: string,
-    zuhr_jamat: string,
-    asr_azan: string,
-    asr_jamat: string,
-    maghrib_azan: string,
-    maghrib_jamat: string,
-    isha_azan: string,
-    isha_jamat: string,
-    namaz: string
+    time: string | undefined,
+    fajr_azan: string | undefined,
+    fajr_jamat: string | undefined,
+    zuhr_azan: string | undefined,
+    zuhr_jamat: string | undefined,
+    asr_azan: string | undefined,
+    asr_jamat: string | undefined,
+    maghrib_azan: string | undefined,
+    maghrib_jamat: string | undefined,
+    isha_azan: string | undefined,
+    isha_jamat: string | undefined,
+    namaz: string | undefined
 ) {
-  if (time >= fajr_azan && time < fajr_jamat) {
+  if (time! >= fajr_azan! && time! < fajr_jamat!) {
     namaz = "Fajr";
-  } else if (time >= fajr_jamat && time < zuhr_jamat) {
+  } else if (time! >= fajr_jamat! && time! < zuhr_jamat!) {
     namaz = "Zuhr";
-  } else if (time >= zuhr_jamat && time < asr_jamat) {
+  } else if (time! >= zuhr_jamat! && time! < asr_jamat!) {
     namaz = "Asr";
-  } else if (time >= asr_jamat && time < maghrib_jamat) {
+  } else if (time! >= asr_jamat! && time! < maghrib_jamat!) {
     namaz = "Maghrib";
   } else {
     namaz = "Isha";
@@ -108,76 +110,74 @@ function getNextNamazAccordingToTime(
 function createNamazTableFromData(todaysDate: string) {
   currentNamaz.value = getNextNamazAccordingToTime(
       currentTime.value,
-      response.data.fajr_namaz,
-      response.data.fajr_jamat,
-      response.data.zuhr_namaz,
-      response.data.zuhr_jamat,
-      response.data.asr_namaz,
-      response.data.asr_jamat,
-      response.data.maghrib_namaz,
-      response.data.maghrib_jamat,
-      response.data.isha_namaz,
-      response.data.isha_jamat,
+      namazStore.getNamaz(dateParam)?.fajr_namaz,
+      namazStore.getNamaz(dateParam)?.fajr_jamat,
+      namazStore.getNamaz(dateParam)?.zuhr_namaz,
+      namazStore.getNamaz(dateParam)?.zuhr_jamat,
+      namazStore.getNamaz(dateParam)?.asr_namaz,
+      namazStore.getNamaz(dateParam)?.asr_jamat,
+      namazStore.getNamaz(dateParam)?.maghrib_namaz,
+      namazStore.getNamaz(dateParam)?.maghrib_jamat,
+      namazStore.getNamaz(dateParam)?.isha_namaz,
+      namazStore.getNamaz(dateParam)?.isha_jamat,
       currentNamaz.value
   );
 
-  console.log(currentNamaz.value);
 
   if (currentNamaz.value == "Fajr") {
-    nextNamazTime = response.data.fajr_namaz.toString();
+    nextNamazTime = namazStore.getNamaz(dateParam)?.fajr_namaz.toString();
   } else if (currentNamaz.value == "Zuhr") {
-    nextNamazTime = response.data.zuhr_namaz.toString();
+    nextNamazTime = namazStore.getNamaz(dateParam)?.zuhr_namaz.toString()
   } else if (currentNamaz.value == "Asr") {
-    nextNamazTime = response.data.asr_namaz.toString();
+    nextNamazTime = namazStore.getNamaz(dateParam)?.asr_namaz.toString()
   } else if (currentNamaz.value == "Maghrib") {
-    nextNamazTime = response.data.maghrib_namaz.toString();
+    nextNamazTime = namazStore.getNamaz(dateParam)?.maghrib_namaz.toString()
   } else {
-    nextNamazTime = response.data.isha_namaz.toString();
+    nextNamazTime = namazStore.getNamaz(dateParam)?.isha_namaz.toString()
   }
-  console.log(nextNamazTime);
+
 
   timeDifference.value = getDifferenceBetweenTwoTimes(
       todaysDate,
-      nextNamazTime,
+      nextNamazTime!,
       currentTime.value
   );
 
-  console.log(currentNamaz.value);
 
   todayNamazData = [
     {
       name: "Fajr",
       icon: Sunrise,
-      startTime: response.data.fajr_namaz,
-      endTime: response.data.fajr_jamat,
+      startTime: namazStore.getNamaz(dateParam)?.fajr_namaz.toString(),
+      endTime: namazStore.getNamaz(dateParam)?.fajr_jamat.toString(),
       condition: currentNamaz.value == "Fajr",
     },
     {
       name: "Zuhr",
       icon: Sunrise,
-      startTime: response.data.zuhr_namaz,
-      endTime: response.data.zuhr_jamat,
+      startTime: namazStore.getNamaz(dateParam)?.zuhr_namaz.toString(),
+      endTime: namazStore.getNamaz(dateParam)?.zuhr_jamat.toString(),
       condition: currentNamaz.value == "Zuhr",
     },
     {
       name: "Asr",
       icon: Sunrise,
-      startTime: response.data.asr_namaz,
-      endTime: response.data.asr_jamat,
+      startTime: namazStore.getNamaz(dateParam)?.asr_namaz.toString(),
+      endTime: namazStore.getNamaz(dateParam)?.asr_namaz.toString(),
       condition: currentNamaz.value == "Asr",
     },
     {
       name: "Maghrib",
       icon: Sunset,
-      startTime: response.data.maghrib_namaz,
-      endTime: response.data.maghrib_jamat,
+      startTime: namazStore.getNamaz(dateParam)?.maghrib_namaz.toString(),
+      endTime: namazStore.getNamaz(dateParam)?.maghrib_namaz.toString(),
       condition: currentNamaz.value == "Maghrib",
     },
     {
       name: "Isha",
       icon: Sunset,
-      startTime: response.data.isha_namaz,
-      endTime: response.data.isha_jamat,
+      startTime: namazStore.getNamaz(dateParam)?.isha_namaz.toString(),
+      endTime: namazStore.getNamaz(dateParam)?.isha_namaz.toString(),
       condition: currentNamaz.value == "Isha",
     },
   ];
@@ -185,24 +185,28 @@ function createNamazTableFromData(todaysDate: string) {
 
 onMounted(async () => {
 
+  namazStore.isLoading = true;
   if (!userStore.user!.masjidId) {
     console.log("does not exist")
     return;
   }
   console.log("does exist")
   const todaysDate = new Date().toISOString().substring(0, 10);
-  response = await (
-      await axios(`${BASE_URL}/namaz/user/${userStore.user!.masjidId}/date/${todaysDate}`)
-  ).data;
+  namazStore.setNamaz(await (
+      await axios(`${BASE_URL}/namaz/user/${userStore.user!.masjidId}/date/${dateParam}`)
+  ).data.data);
+
+  console.log(namazStore.namaz)
+  console.log(namazStore.getNamaz(dateParam))
   createNamazTableFromData(todaysDate);
 
   console.log(currentNamaz.value);
 
-  isLoading.value = false;
+  namazStore.isLoading = false;
 });
 
 // used to make the clock tick in time backwards,
-//until it reaches zero and hence a function is trigggered,
+//until it reaches zero and hence a function is triggered,
 // to get the current namaz according to the time
 if (userStore.user!.masjidId != null) {
   setInterval(() => {
@@ -210,7 +214,7 @@ if (userStore.user!.masjidId != null) {
       timeDifference.value--;
     } else {
       const todaysDate = new Date().toISOString().substring(0, 10);
-      console.log(todaysDate);
+
 
       currentTime.value = new Date().toLocaleTimeString();
       createNamazTableFromData(todaysDate);
@@ -246,53 +250,60 @@ if (userStore.user!.masjidId != null) {
   </template>
   <template v-else>
 
-    <template v-if="isLoading">
+    <template v-if="namazStore.isLoading">
       <h1>Loading</h1>
     </template>
     <template v-else>
-      <div class="p-4 mx-auto max-w-[800px] text-xl lg:text-2xl">
-        <h2 class="font-semibold text-lg text-gray-800">Mumbai, India</h2>
-        <div class="flex justify-between items-center">
+      <div class="mx-3 flex justify-between items-center gap-2">
+        <img :src="LeftArrow" alt="left arrow" class="flex-none w-10 h-10">
+        <div class="p-4 mx-auto max-w-[800px] text-xl lg:text-2xl">
+          <h2 class="font-semibold text-lg text-gray-800">Mumbai, India</h2>
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-gray-600 font-medium text-xl">
+                Next Namaz: {{ currentNamaz }} in
+                {{ secondsToHms(timeDifference) }}
+              </p>
+            </div>
+            <img src="@/assets/mosque.png" alt="" class="flex-none w-20 h-auto">
+          </div>
+
           <div>
-            <p class="text-gray-600 font-medium text-xl">
-              Next Namaz: {{ currentNamaz }} in
-              {{ secondsToHms(timeDifference) }}
-            </p>
-          </div>
-          <img src="@/assets/mosque.png" alt="" width="80" height="150"/>
-        </div>
-        <div>
-          <p class="text-gray-600 mb-3">Date</p>
-          <h2 class="text-2xl font-medium">17 Jummada Al-Awwal 1445</h2>
-          <h3 class="text-xl text-gray-500 font-medium mb-10">
-            {{ new Date().toUTCString().slice(0, -12) }}
-          </h3>
-          <div class="flex justify-center">
-            <TableLayout>
-              <tr class="bg-green-100 h-[50px] px-4 py-2">
-                <td class="w-[200px] p-4">
-                  <p class="font-medium text-black">Namaz</p>
-                </td>
-                <td class="w-[200px] p-4">
-                  <p class="font-semibold text-black">Start Time</p>
-                </td>
-                <td class="p-4">
-                  <p class="font-semibold text-black">End Time</p>
-                </td>
-              </tr>
-              <template v-for="namaz in todayNamazData">
-                <NamazCard
-                    :name="namaz.name"
-                    :icon="namaz.icon"
-                    :startTime="namaz.startTime"
-                    :end-time="namaz.endTime"
-                    :is-ongoing="namaz.condition"
-                />
-              </template>
-            </TableLayout>
+            <p class="text-gray-600 mb-3">Date</p>
+            <h2 class="text-2xl font-medium">17 Jummada Al-Awwal 1445</h2>
+            <h3 class="text-xl text-gray-500 font-medium mb-10">
+              {{ new Date().toUTCString().slice(0, -12) }}
+            </h3>
+            <div class="flex justify-center">
+              <TableLayout>
+                <tr class="bg-green-100 h-[50px] px-4 py-2">
+                  <td class="w-[200px] p-4">
+                    <p class="font-medium text-black">Namaz</p>
+                  </td>
+                  <td class="w-[200px] p-4">
+                    <p class="font-semibold text-black">Start Time</p>
+                  </td>
+                  <td class="p-4">
+                    <p class="font-semibold text-black">End Time</p>
+                  </td>
+                </tr>
+                <template v-for="namaz in todayNamazData">
+                  <NamazCard
+                      :name="namaz.name"
+                      :icon="namaz.icon"
+                      :startTime="namaz.startTime"
+                      :end-time="namaz.endTime"
+                      :is-ongoing="namaz.condition"
+                  />
+                </template>
+              </TableLayout>
+            </div>
           </div>
         </div>
+
+        <img :src="RightArrow" alt="right arrow" class="flex-none w-10 h-10">
       </div>
+
     </template>
   </template>
 </template>

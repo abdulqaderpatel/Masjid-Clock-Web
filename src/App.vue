@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {RouterView} from "vue-router";
-import {AUTH_TOKEN, BASE_URL, TYPE} from "./global";
+import {AUTH_TOKEN, BASE_URL, getTodaysDate, TYPE} from "./global";
 import router from "./router";
 import axios from "axios";
 import {onMounted, ref} from "vue";
@@ -55,14 +55,33 @@ onMounted(async () => {
 
       if (masjidData.type == UserType.USER) {
         try {
-
           const data = await axios.get(`${BASE_URL}/user/masjidId/${masjidData.id}`);
 
-          masjidData.masjidId = data.data.data;
-
-        } catch (e) {
-          console.log("User does not have a masjid id");
+          // Check the status manually if needed
+          if (data.status >= 400) {
+            console.log("User does not have a masjid ID");
+          } else {
+            // If the request was successful, assign the masjidId
+            masjidData.masjidId = data.data.data;
+          }
+        } catch (error) {
+          if (error.response) {
+            if (error.response.status === 400) {
+              console.log("User does not have a masjid ID (handled 400 error)");
+            } else {
+              // Handle other status codes if needed
+              console.error('Error status:', error.response.status);
+              console.error('Error data:', error.response.data);
+            }
+          } else if (error.request) {
+            // Handle cases where no response was received
+            console.error('No response received:', error.request);
+          } else {
+            // Handle other errors
+            console.error('Error message:', error.message);
+          }
         }
+
       }
 
 
@@ -70,7 +89,7 @@ onMounted(async () => {
       isLoading.value = false;
 
       if (masjidData.type == UserType.USER) {
-        await router.push("/namaz");
+        await router.push(`/namaz/${getTodaysDate()}`);
       } else {
 
         await router.push("/");

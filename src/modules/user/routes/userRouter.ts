@@ -18,7 +18,7 @@ export default [
         component: SettingsView,
     },
     {
-        path: "/namaz",
+        path: "/namaz/:date",
         name: "namaz",
         component: DailyNamazView
     },
